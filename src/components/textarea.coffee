@@ -51,6 +51,11 @@ export default class Textarea
         # https://stackoverflow.com/questions/46651479/textarea-selection-change
         Data._selectionStart e.target.selectionStart || 0
         Data._selectionEnd e.target.selectionEnd || 0
+
+        Data.active_asset(null)
+        # deselect images in markdown preview
+        els = document.querySelectorAll('.preview img')
+        el.classList.remove('selected') for el in els
       onkeydown: (e)=>
         Data.meta(true)  if e.key is 'Meta'
         Data.shift(true) if e.key is 'Shift'

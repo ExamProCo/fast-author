@@ -19,6 +19,9 @@ class Data
     # assets only for the current markdown file that is active
     @assets  = stream([])
 
+    # The currently selected image in the markdown to apply editing
+    @active_asset = stream null
+
     # the contents of the markdown file
     @document = stream('')
 
@@ -27,6 +30,9 @@ class Data
 
     # whether the shift key is behind held
     @shift = stream(false)
+
+    # when true will hide editor and center preview.
+    @publisher_preview = stream(false)
 
     # the start and end select for markdown textarea
     @selectionStart = stream false

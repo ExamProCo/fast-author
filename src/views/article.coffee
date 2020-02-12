@@ -5,11 +5,18 @@ import Infobar from 'components/infobar'
 import Data from 'common/data'
 
 export default class ArticleView
+  classes:=>
+    if Data.publisher_preview()
+      'ppreview'
+    else
+      ''
   view:->
-    m 'main',
-      m Sidebar
+    m 'main', class: @classes(),
+      unless Data.publisher_preview()
+        m Sidebar
       if Data.active_file()
         [
           m Article
-          m Infobar
+          unless Data.publisher_preview()
+            m Infobar
         ]

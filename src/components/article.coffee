@@ -1,13 +1,19 @@
 import * as m from 'mithril'
 import Textarea from 'components/textarea'
+import { Remarkable } from 'remarkable'
 import Preview from 'components/preview'
 import Data    from 'common/data'
 import Save    from 'common/save'
 import HotkeyHeading from 'lib/hotkey_heading'
 import HotkeyWrap from 'lib/hotkey_wrap'
+#import sharp from 'sharp'
 
 
 export default class Article
+  constructor:->
+    @md = new Remarkable({
+      html: true
+    })
   bold:=>
     target = document.getElementById('editor')
     start_at = target.selectionStart
@@ -34,40 +40,59 @@ export default class Article
     Data.selectionStart data.selectionStart
     Data.selectionEnd   data.selectionEnd
   image_resize:=>
+    console.log('resizing')
+    #sharp(Data.active_asset())
+      #.resize(width:726, {
+        #fit: 'contain',
+      #})
+      #.toFile(Data.active_asset())
   image_border:=>
   image_dropshadow:=>
   image_drop:=>
+  image_paint:=>
+  publisher_preview:=>
+    Data.publisher_preview !Data.publisher_preview()
   save:=>
     Save.save()
+  subheader:=>
+    m 'section.sub',
+      m '.editor',
+        m 'span.lbl', 'Editor'
+        m 'span.btn.save', onclick: @save,
+          m 'span.far.fa-save'
+        m 'span.btn.bold', onclick: @bold,
+          m 'span', 'bold'
+        m 'span.btn.red', onclick: @red,
+          m 'span', 'red'
+        m 'span.btn.underline', onclick: @underline,
+          m 'span', 'underline'
+        m 'span.btn.highlight', onclick: @highlight,
+          m 'span', 'highlight'
+        m 'em'
+      m '.preview',
+        m 'span.lbl', 'Preview'
+        if Data.active_asset()
+          [
+            m 'span.btn.crop', onclick: @image_crop,
+              m 'span.fas.fa-crop-alt'
+            m 'span.btn.crop', onclick: @image_resize,
+              m 'span.fas.fa-compress'
+            m 'span.btn.border', onclick: @image_border,
+              m 'span.fas.fa-border-style'
+            m 'span.btn.paint', onclick: @image_paint,
+              m 'span.fas.fa-paint-brush'
+          ]
+      m 'em'
   header:=>
     m 'header',
       m 'section.main',
         m '.title', contenteditable: true,
           m.trust Data.active_file()
-      m 'section.sub',
-        m '.editor',
-          m 'span.lbl', 'Editor'
-          m 'span.btn.save', onclick: @save,
-            m 'span.far.fa-save'
-          m 'span.btn.bold', onclick: @bold,
-            m 'span', 'bold'
-          m 'span.btn.red', onclick: @red,
-            m 'span', 'red'
-          m 'span.btn.underline', onclick: @underline,
-            m 'span', 'underline'
-          m 'span.btn.highlight', onclick: @highlight,
-            m 'span', 'highlight'
-          m 'em'
-
-        m '.preview',
-          m 'span.lbl', 'Preview'
-          m 'span.btn.crop', onclick: @image_crop,
-            m 'span.fas.fa-crop-alt'
-          m 'span.btn.crop', onclick: @image_resize,
-            m 'span.fas.fa-compress'
-          m 'span.btn.border', onclick: @image_border,
-            m 'span.fas.fa-border-style'
+        m 'span.btn.save', onclick: @publisher_preview,
+          m 'span.far.fa-eye'
         m 'em'
+      unless Data.publisher_preview()
+        @subheader()
   panes:=>
     m '.panes',
       m Textarea
@@ -76,4 +101,8 @@ export default class Article
   view:->
     m 'article',
       @header()
-      @panes()
+      if Data.publisher_preview()
+        m '.publisher_preview.markdown',
+          m.trust(@md.render(Data.document()))
+      else
+        @panes()
