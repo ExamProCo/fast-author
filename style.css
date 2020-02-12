@@ -1,0 +1,233 @@
+* { 
+  box-sizing: border-box; 
+}
+html, body {
+  background: #fff;
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  font-family: arial;
+}
+
+a {
+  text-decoration: none;
+}
+
+em {
+  display: block;
+  clear: both;
+}
+
+strong.r {
+  color: rgb(255,0,0)
+}
+
+strong.h {
+  background: rgb(255,255,0)
+}
+
+main {
+  padding-left: 200px;
+  padding-top: 92px;
+  padding-bottom: 31px;
+  height: 100%;
+}
+
+.pane {
+  float: left;
+  width: 50%;
+  height: 100%;
+  padding: 24px;
+  overflow: auto;
+}
+
+.editor {
+  float: left;
+  border-right: solid 1px rgb(200,200,200);
+  outline: none;
+  white-space: nowrap
+}
+
+article {
+  height: 100%;
+}
+.panes {
+  height: 100%;
+}
+
+textarea {
+  font-size: 14px;
+  border: none;
+  resize: none;
+
+}
+
+header {
+  width: 100%;
+  padding-left: 200px;
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+}
+header section {
+  top: 0;
+  left: 0;
+}
+header section.main {
+  background: rgb(245,245,245);
+  border-bottom: solid 1px rgb(220,220,220);
+}
+
+header section.sub {
+  background: rgb(245,245,245);
+  border-bottom: solid 1px rgb(200,200,200);
+}
+header section.sub div{
+  padding: 8px 16px;
+  float: left;
+  width: 50%;
+}
+
+header section.sub .lbl {
+  font-size: 16px;
+  font-weight: 600;
+  padding-top: 4px;
+  display: inline-block;
+}
+
+header section.sub div:first-child{
+  border-right: solid 1px rgb(200,200,200);
+}
+
+header section .title {
+  padding: 16px;
+  outline: none;
+  font-weight: 600;
+}
+
+nav {
+  background: rgb(23,24,31);
+  width: 200px;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+}
+
+nav a {
+  color: rgb(169,169,169);
+  width: 100%;
+  font-size: 14px;
+  padding: 8px 16px;
+  display: block;
+}
+nav a.active {
+  background: rgb(51,55,70);
+}
+nav a:hover {
+  color: #fff
+}
+
+nav .title {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  font-weight: 600;
+  padding: 8px 16px;
+  padding-top: 24px;
+}
+
+nav .icon {
+  margin-right: 4px
+}
+
+nav a.asset {
+  padding: 6px 16px;
+  position: relative;
+}
+
+nav a.asset .img {
+  display: none;
+  background-size: contain;
+  position: absolute;
+  top: 0;
+  z-index: 500;
+  border: solid 1px rgba(51,55,70,0.5);
+  border-left: none;
+  background: #fff;
+  background-repeat: no-repeat;
+}
+nav a.asset:hover .img {
+  display: block;
+}
+nav a.asset .size {
+  background: rgba(51,55,70,0.7);
+  font-size: 12px;
+  padding: 4px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+nav a.asset img {
+  max-width: 200px;
+}
+
+
+.markdown h1, h2, h3, h4, h5, h6 {
+  margin: 0px;
+  margin-bottom: 16px;
+}
+
+.markdown p {
+  margin-top: 0px;
+}
+
+.markdown img {
+  margin: 0;
+  display: block;
+  border: solid 1px rgb(255,255,255)
+}
+
+.b {
+  font-weight: 600;
+}
+
+.infobar {
+  text-align: right;
+  background: rgb(245,245,245);
+  border-top: solid 1px rgb(220,220,220);
+  width: 100%;
+  padding: 8px;
+  padding-left: 216px;
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  bottom: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgb(100,100,100);
+}
+
+.btn.bold { font-weight: 600; }
+.btn.red { color: rgb(255,0,0) }
+.btn.underline { text-decoration: underline; }
+.btn.highlight { background: rgb(255,255,0) }
+
+.btn {
+  margin-left: 4px;
+  float: right;
+  border-radius: 4px;
+  background: rgb(250,250,250);
+  border: solid 1px rgb(220,220,220);
+  border-bottom: solid 1px rgb(180,180,180);
+  padding: 3px 12px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  border: solid 1px rgb(120,120,120);
+}
