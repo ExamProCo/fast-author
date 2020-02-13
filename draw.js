@@ -81,7 +81,7 @@ const click_canvas = function(ev){
 
 function save(){
   console.log('saving')
-  let path = "/Users/andrew/Desktop/out4.png"
+  let path = "/tmp/save-drawing-overlay.png"
   const el = document.getElementById('draw')
   fs.writeFile(path, el.toDataURL().replace(/^data:image\/png;base64,/, ""), 'base64', function(err){
     console.log(err)

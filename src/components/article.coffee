@@ -54,7 +54,7 @@ export default class Article
     # x, y, width, height
     ctx.rect(0, 0, asset.width, asset.height)
     ctx.stroke()
-    path = "/Users/andrew/Desktop/out3.png"
+    path = "/tmp/save-border.png"
     fs.writeFile path, el.toDataURL().replace(/^data:image\/png;base64,/, ""), 'base64', (err)->
       console.log(err)
       ipc.send('sharp-border',overlay: path, source: asset.path)
