@@ -31103,9 +31103,25 @@ common_save__WEBPACK_IMPORTED_MODULE_4__["default"].auto();
 electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].send('request-markdown-files');
 
 electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].on('response-markdown-files', (e, data) => {
+  var d, file, i, len, ref;
   common_data__WEBPACK_IMPORTED_MODULE_3__["default"].home(data.home);
   common_data__WEBPACK_IMPORTED_MODULE_3__["default"].files(data.files);
-  if (!common_data__WEBPACK_IMPORTED_MODULE_3__["default"].active_file()) {
+  if (common_data__WEBPACK_IMPORTED_MODULE_3__["default"].active_file()) {
+    
+    // reset asset in case where image is inserted but doesn't
+    // have width and height.
+    file = null;
+    ref = data.files;
+    for (i = 0, len = ref.length; i < len; i++) {
+      d = ref[i];
+      if (d.path === common_data__WEBPACK_IMPORTED_MODULE_3__["default"].active_file().replace('file://', '')) {
+        file = d;
+        break;
+      }
+    }
+    console.log('active file', file);
+    common_data__WEBPACK_IMPORTED_MODULE_3__["default"].active_file(file);
+  } else {
     common_data__WEBPACK_IMPORTED_MODULE_3__["default"].active_file(common_data__WEBPACK_IMPORTED_MODULE_3__["default"].files()[0].path);
   }
   return mithril__WEBPACK_IMPORTED_MODULE_0__["redraw"](true);

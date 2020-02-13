@@ -142,9 +142,7 @@ nav {
   top: 0;
   left: 0;
   padding-top: 51px;
-  z-index: 200;
-  overflow-y: auto;
-  overflow-x: visible; }
+  z-index: 200; }
   nav a {
     color: darkgray;
     width: 100%;
