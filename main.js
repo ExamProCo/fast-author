@@ -158,7 +158,7 @@ ipc.on('sharp-draw', function(e,opts){
     org_asset: opts.source,
     new_asset: new_asset
   }
-  win.webcontents.send('response-sharp',data)
+  win.webContents.send('response-sharp',data)
 })
 
 ipc.on('assets-reveal', function(e,opts){
