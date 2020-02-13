@@ -83,7 +83,7 @@ export default class Article
           m 'span.far.fa-save'
         m 'span.btn.bold', "data-tippy-content": "#{@meta_char()} + B", onclick: @bold,
           m 'span', 'bold'
-        m 'span.btn.red', "data-tippy-content": "#{@meta_char()} + A", onclick: @red,
+        m 'span.btn.red', "data-tippy-content": "#{@meta_char()} + G", onclick: @red,
           m 'span', 'red'
         m 'span.btn.underline', onclick: @underline,
           m 'span', 'underline'
