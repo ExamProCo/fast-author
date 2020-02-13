@@ -19,6 +19,13 @@ em {
   clear: both;
 }
 
+#draw {
+  position: fixed;
+  z-index: -1;
+  left: -9999px;
+  top: -9999px;
+}
+
 strong.r {
   color: rgb(255,0,0)
 }
@@ -53,7 +60,7 @@ main.ppreview header {
   border-radius: 4px;
   border: solid 1px rgb(210,210,210);
   background: #fff;
-  padding: 24px;
+  padding: 24px 77px;
   margin: 0px auto;
   margin-top: 24px;
   box-shadow: 1px 1px 0px #c2c2c2;
@@ -171,6 +178,19 @@ nav .title {
   font-weight: 600;
   padding: 8px 16px;
   padding-top: 24px;
+}
+
+nav .title .n {
+  float: left;
+}
+
+nav .title .far {
+  float: right;
+  color: rgba(255,255,255,0.3);
+  cursor: pointer
+}
+nav .title .far:hover {
+  color: #fff
 }
 
 nav .icon {

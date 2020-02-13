@@ -20,3 +20,9 @@ ipc.on 'response-markdown-files', (e,data)=>
 ipc.on 'response-assets', (e,data)=>
   Data.assets data.files
   m.redraw(true)
+ipc.on 'response-sharp', (e,data)=>
+  console.log 'response sharp', data
+  v = Data.document().replace(data.org_asset,data.new_asset)
+  Data.active_asset("file://"+data.new_asset)
+  Data.document v
+  ipc.send('request-assets',project: Data.active_file())

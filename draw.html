@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <link rel="stylesheet" href="./css/fontawesome.css">
+    <title>Fast Author - Image Editor</title>
+    <link rel="stylesheet" type="text/css" href="draw.css">
+  </head>
+  <body>
+    <header>
+      <div class='btn rec'> <span></span> </div>
+      <div class='btn marker mk1'><span>1</span></div>
+      <div class='btn marker mk2'><span>2</span></div>
+      <div class='btn marker mk3'><span>3</span></div>
+      <div class='btn marker mk4'><span>4</span></div>
+      <div class='btn marker mk5'><span>5</span></div>
+      <div class='btn marker mk6'><span>6</span></div>
+      <div class='btn save'> Save </div>
+      <div class='clear'></div>
+    </header>
+    <article>
+      <img id='source' />
+      <section>
+        <canvas id='draw'></canvas>
+      </section>
+      <script src="./draw.js"type='text/javascript'></script>
+    </article>
+  </body>
+</html>
+

@@ -2,6 +2,7 @@ import * as m from 'mithril'
 import HotkeyHeading from 'lib/hotkey_heading'
 import HotkeyWrap from 'lib/hotkey_wrap'
 import Data from 'common/data'
+import Save from 'common/save'
 import TextInsert from 'lib/text_insert'
 import {ipcRenderer as ipc} from 'electron'
 import fs from 'fs'
@@ -67,16 +68,19 @@ export default class Textarea
             Data.document       data.value
             Data.selectionStart data.selectionStart
             Data.selectionEnd   data.selectionEnd
+          else if e.key is 's'
+            Save.save()
           else if e.key is 'b'
             data = HotkeyWrap.insert Data.document(), start_at, end_at, '**', '**'
             Data.document       data.value
             Data.selectionStart data.selectionStart
             Data.selectionEnd   data.selectionEnd
           else if e.key is 'f'
-            data = HotkeyWrap.insert Data.document(), start_at, end_at, "<strong class='r'>", "</strong>"
-            Data.document       data.value
-            Data.selectionStart data.selectionStart
-            Data.selectionEnd   data.selectionEnd
+            ipc.send('toggle-fullscreen')
+            #data = HotkeyWrap.insert Data.document(), start_at, end_at, "<strong class='r'>", "</strong>"
+            #Data.document       data.value
+            #Data.selectionStart data.selectionStart
+            #Data.selectionEnd   data.selectionEnd
           else if e.key is 'd'
             data = HotkeyWrap.insert Data.document(), start_at, end_at, "<strong class='h'>", "</strong>"
             Data.document       data.value

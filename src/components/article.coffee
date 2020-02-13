@@ -6,7 +6,8 @@ import Data    from 'common/data'
 import Save    from 'common/save'
 import HotkeyHeading from 'lib/hotkey_heading'
 import HotkeyWrap from 'lib/hotkey_wrap'
-#import sharp from 'sharp'
+import fs from 'fs'
+import {ipcRenderer as ipc} from 'electron'
 
 
 export default class Article
@@ -40,16 +41,28 @@ export default class Article
     Data.selectionStart data.selectionStart
     Data.selectionEnd   data.selectionEnd
   image_resize:=>
-    console.log('resizing')
-    #sharp(Data.active_asset())
-      #.resize(width:726, {
-        #fit: 'contain',
-      #})
-      #.toFile(Data.active_asset())
+    console.log('send request', Data.active_asset())
+    ipc.send('sharp-resize',asset: Data.active_asset())
   image_border:=>
+    asset = Data.get_asset()
+    el = document.getElementById('draw')
+    ctx = el.getContext("2d")
+    ctx.canvas.width  = asset.width
+    ctx.canvas.height = asset.height
+    ctx.beginPath()
+    ctx.strokeStyle = "#000000"
+    # x, y, width, height
+    ctx.rect(0, 0, asset.width, asset.height)
+    ctx.stroke()
+    path = "/Users/andrew/Desktop/out3.png"
+    fs.writeFile path, el.toDataURL().replace(/^data:image\/png;base64,/, ""), 'base64', (err)->
+      console.log(err)
+      ipc.send('sharp-border',overlay: path, source: asset.path)
   image_dropshadow:=>
   image_drop:=>
   image_paint:=>
+    asset = Data.get_asset()
+    ipc.send('drawing-window',asset)
   publisher_preview:=>
     Data.publisher_preview !Data.publisher_preview()
   save:=>

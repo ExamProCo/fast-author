@@ -19,16 +19,23 @@ export default class Sidebar
       Data.document data.toString()
       ipc.send('request-assets',project: Data.active_file())
   #add an asset where current cursor is located
+  reveal:=>
+    ipc.send('assets-reveal',path: "#{Data.home()}/#{Data.active_file()}/assets/")
   add:(file)=>
     =>
       TextInsert.at "![](#{file.path})"
   view:->
     m 'nav',
-      m '.title', 'Recent Projects'
+      m '.title',
+          m 'span.n', 'Recent Projects'
+          m 'em'
       for file in Data.files()
         m 'a', href: '#', class: @classes(file), onclick: @click(file), file.name
       if Data.active_file()
-        m '.title', 'Assets'
+        m '.title',
+          m 'span.n', 'Assets'
+          m 'span.far.fa-folder', onclick: @reveal
+          m 'em'
       for file in Data.assets()
         m 'a.asset', href: '#', onclick: @add(file),
           m 'span.icon.far fa-file-image'

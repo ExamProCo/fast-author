@@ -6,16 +6,8 @@ const coffee = {
   test: /\.coffee$/, loader: 'coffee-loader'
 }
 
-const nodeModules = {};
-fs.readdirSync('node_modules')
-    .filter(item => ['.bin'].indexOf(item) === -1 )  // exclude the .bin folder
-    .forEach((mod) => {
-        nodeModules[mod] = 'commonjs ' + mod;
-    });
-
 const namespace_application = {
   mode: 'production',
-  externals: nodeModules,
   target: 'electron-renderer',
   devtool: 'none',
   entry: {

@@ -50,4 +50,11 @@ class Data
   keep_selection:=>
     Data.selectionStart Data._selectionStart()
     Data.selectionEnd Data._selectionEnd()
+  get_asset:=>
+    asset = null
+    for a in @assets()
+      if a.path is @active_asset().replace('file://','')
+        asset = a
+        break
+    asset
 export default new Data()

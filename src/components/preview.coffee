@@ -1,6 +1,8 @@
 import * as m from 'mithril'
 import { Remarkable } from 'remarkable'
 import Data    from 'common/data'
+import canvas_export from 'canvas-to-image'
+import fs from 'fs'
 
 # TODO - Maybe include this?
 #  https://github.com/jonschlinkert/pretty-remarkable
