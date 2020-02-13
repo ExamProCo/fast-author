@@ -5,6 +5,7 @@ const homedir = require('os').homedir()
 const glob = require('glob')
 const size_of = require('image-size')
 const sharp = require('sharp')
+const prompt = require('electron-prompt')
 
 let win, win_draw
 
@@ -53,7 +54,8 @@ app.on('activate', function () {
   if (BrowserWindow.getAllWindows().length === 0) createWindow()
 })
 
-ipc.on('request-markdown-files', function(){
+
+function request_markdown_files(){
   const home   = get_home_path()
   const folder = path.join(home,'fast-author','*')
 
@@ -71,6 +73,9 @@ ipc.on('request-markdown-files', function(){
     }
     win.webContents.send('response-markdown-files',data)
   })
+}
+ipc.on('request-markdown-files', function(){
+  request_markdown_files()
 })
 
 ipc.on('request-assets', function(e,opts){
@@ -153,11 +158,10 @@ ipc.on('sharp-draw', function(e,opts){
     org_asset: opts.source,
     new_asset: new_asset
   }
-  win.webContents.send('response-sharp',data)
+  win.webcontents.send('response-sharp',data)
 })
 
 ipc.on('assets-reveal', function(e,opts){
-  console.log('path',opts.path)
   shell.openItem(opts.path)
 })
 
@@ -167,4 +171,30 @@ ipc.on('toggle-fullscreen', function(e,opts){
 
 ipc.on('drawing-window',function(e,opts){
   createDrawingWindow(opts)
+})
+
+ipc.on('prompt-new',function(e,opts){
+  prompt({
+      title: 'New Project',
+      label: 'Name',
+      value: '',
+      inputAttrs: {
+          type: 'text'
+      },
+      type: 'input'
+  })
+  .then((name) => {
+      if(name === null) {
+      } else {
+        const path = get_home_path() + "/fast-author/" + name
+        fs.mkdirSync(path)
+        fs.mkdirSync(path + '/assets')
+        fs.mkdirSync(path + '/assets/original')
+        fs.mkdirSync(path + '/assets/modified')
+        fs.openSync(path + '/index.md', 'w')
+        request_markdown_files()
+        win.webContents.send('response-new-project',{path: path})
+      }
+  })
+  .catch(console.error);
 })

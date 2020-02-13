@@ -26,3 +26,8 @@ ipc.on 'response-sharp', (e,data)=>
   Data.active_asset("file://"+data.new_asset)
   Data.document v
   ipc.send('request-assets',project: Data.active_file())
+
+ipc.on 'response-new-project', (e,data)=>
+  Data.active_file data.path
+  console.log data.path
+  m.redraw(true)

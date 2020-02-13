@@ -21,6 +21,8 @@ export default class Sidebar
   #add an asset where current cursor is located
   reveal:=>
     ipc.send('assets-reveal',path: "#{Data.home()}/#{Data.active_file()}/assets/")
+  reveal_home:=>
+    ipc.send('assets-reveal',path: "#{Data.home()}/")
   add:(file)=>
     =>
       TextInsert.at "![](#{file.path})"
@@ -28,6 +30,7 @@ export default class Sidebar
     m 'nav',
       m '.title',
           m 'span.n', 'Recent Projects'
+          m 'span.far.fa-folder', onclick: @reveal_home
           m 'em'
       for file in Data.files()
         m 'a', href: '#', class: @classes(file), onclick: @click(file), file.name

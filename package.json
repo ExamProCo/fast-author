@@ -17,6 +17,7 @@
     "coffeescript": "^2.4.1",
     "commonjs": "0.0.1",
     "electron": "^7.0.0",
+    "electron-prompt": "^1.5.1",
     "electron-rebuild": "^1.10.0",
     "glob": "^7.1.6",
     "marked": "^0.8.0",

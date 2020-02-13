@@ -25539,6 +25539,12 @@ electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].on('response-sharp', (e, da
   });
 });
 
+electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].on('response-new-project', (e, data) => {
+  common_data__WEBPACK_IMPORTED_MODULE_3__["default"].active_file(data.path);
+  console.log(data.path);
+  return mithril__WEBPACK_IMPORTED_MODULE_0__["redraw"](true);
+});
+
 
 /***/ }),
 
@@ -26052,6 +26058,7 @@ var Sidebar;
     this.click = this.click.bind(this);
     //add an asset where current cursor is located
     this.reveal = this.reveal.bind(this);
+    this.reveal_home = this.reveal_home.bind(this);
     this.add = this.add.bind(this);
   }
 
@@ -26085,6 +26092,12 @@ var Sidebar;
     });
   }
 
+  reveal_home() {
+    return electron__WEBPACK_IMPORTED_MODULE_4__["ipcRenderer"].send('assets-reveal', {
+      path: `${common_data__WEBPACK_IMPORTED_MODULE_2__["default"].home()}/`
+    });
+  }
+
   add(file) {
     return () => {
       return lib_text_insert__WEBPACK_IMPORTED_MODULE_3__["default"].at(`![](${file.path})`);
@@ -26093,7 +26106,9 @@ var Sidebar;
 
   view() {
     var file;
-    return mithril__WEBPACK_IMPORTED_MODULE_0__('nav', mithril__WEBPACK_IMPORTED_MODULE_0__('.title', mithril__WEBPACK_IMPORTED_MODULE_0__('span.n', 'Recent Projects'), mithril__WEBPACK_IMPORTED_MODULE_0__('em')), (function() {
+    return mithril__WEBPACK_IMPORTED_MODULE_0__('nav', mithril__WEBPACK_IMPORTED_MODULE_0__('.title', mithril__WEBPACK_IMPORTED_MODULE_0__('span.n', 'Recent Projects'), mithril__WEBPACK_IMPORTED_MODULE_0__('span.far.fa-folder', {
+      onclick: this.reveal_home
+    }), mithril__WEBPACK_IMPORTED_MODULE_0__('em')), (function() {
       var i, len, ref, results;
       ref = common_data__WEBPACK_IMPORTED_MODULE_2__["default"].files();
       results = [];
@@ -26281,6 +26296,8 @@ var Textarea;
           //Data.document       data.value
           //Data.selectionStart data.selectionStart
           //Data.selectionEnd   data.selectionEnd
+          } else if (e.key === 'n') {
+            return electron__WEBPACK_IMPORTED_MODULE_6__["ipcRenderer"].send('prompt-new');
           } else if (e.key === 'd') {
             data = lib_hotkey_wrap__WEBPACK_IMPORTED_MODULE_2__["default"].insert(common_data__WEBPACK_IMPORTED_MODULE_3__["default"].document(), start_at, end_at, "<strong class='h'>", "</strong>");
             common_data__WEBPACK_IMPORTED_MODULE_3__["default"].document(data.value);
