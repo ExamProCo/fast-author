@@ -50,6 +50,8 @@ document.addEventListener 'keydown', (e)=>
     else if e.key is 'p'
       Data.publisher_preview !Data.publisher_preview()
       m.redraw(true)
+    else if e.key is 'n'
+      ipc.send('prompt-new')
 document.addEventListener 'keyup', (e)=>
   Data.meta(false)  if e.key is 'Meta'
   Data.shift(false) if e.key is 'Shift'

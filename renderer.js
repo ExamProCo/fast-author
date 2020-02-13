@@ -31149,6 +31149,8 @@ document.addEventListener('keydown', (e) => {
     } else if (e.key === 'p') {
       common_data__WEBPACK_IMPORTED_MODULE_3__["default"].publisher_preview(!common_data__WEBPACK_IMPORTED_MODULE_3__["default"].publisher_preview());
       return mithril__WEBPACK_IMPORTED_MODULE_0__["redraw"](true);
+    } else if (e.key === 'n') {
+      return electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].send('prompt-new');
     }
   }
 });
@@ -32023,8 +32025,6 @@ var Textarea;
             common_data__WEBPACK_IMPORTED_MODULE_3__["default"].document(data.value);
             common_data__WEBPACK_IMPORTED_MODULE_3__["default"].selectionStart(data.selectionStart);
             return common_data__WEBPACK_IMPORTED_MODULE_3__["default"].selectionEnd(data.selectionEnd);
-          } else if (e.key === 'n') {
-            return electron__WEBPACK_IMPORTED_MODULE_6__["ipcRenderer"].send('prompt-new');
           } else if (e.key === 'g') {
             data = lib_hotkey_wrap__WEBPACK_IMPORTED_MODULE_2__["default"].insert(common_data__WEBPACK_IMPORTED_MODULE_3__["default"].document(), start_at, end_at, "<strong class='r'>", "</strong>");
             common_data__WEBPACK_IMPORTED_MODULE_3__["default"].document(data.value);

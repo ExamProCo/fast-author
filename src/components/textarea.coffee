@@ -81,8 +81,6 @@ export default class Textarea
             Data.document       data.value
             Data.selectionStart data.selectionStart
             Data.selectionEnd   data.selectionEnd
-          else if e.key is 'n'
-            ipc.send('prompt-new')
           else if e.key is 'g'
             data = HotkeyWrap.insert Data.document(), start_at, end_at, "<strong class='r'>", "</strong>"
             Data.document       data.value
