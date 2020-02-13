@@ -3,8 +3,12 @@ import Sidebar from 'components/sidebar'
 import Article from 'components/article'
 import Infobar from 'components/infobar'
 import Data from 'common/data'
+import tippy from 'tippy.js'
 
 export default class ArticleView
+  oncreate:(vnode)->
+    console.log('tippy')
+    tippy('[data-tippy-content]')
   classes:=>
     if Data.publisher_preview()
       'ppreview'

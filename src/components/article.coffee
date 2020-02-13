@@ -71,7 +71,7 @@ export default class Article
     m 'section.sub',
       m '.editor',
         m 'span.lbl', 'Editor'
-        m 'span.btn.save', onclick: @save,
+        m 'span.btn.save', "data-tippy-content": 'Save', onclick: @save,
           m 'span.far.fa-save'
         m 'span.btn.bold', onclick: @bold,
           m 'span', 'bold'

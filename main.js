@@ -188,6 +188,7 @@ ipc.on('prompt-new',function(e,opts){
       } else {
         const path = get_home_path() + "/fast-author/" + name
         fs.mkdirSync(path)
+        fs.mkdirSync(path + '/backups')
         fs.mkdirSync(path + '/assets')
         fs.mkdirSync(path + '/assets/original')
         fs.mkdirSync(path + '/assets/modified')

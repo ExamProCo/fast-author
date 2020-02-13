@@ -32,3 +32,4 @@ ipc.on 'response-new-project', (e,data)=>
   Data.active_file data.path
   console.log data.path
   m.redraw(true)
+

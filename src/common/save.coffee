@@ -1,6 +1,7 @@
 import Data from 'common/data'
 import * as m from 'mithril'
 import fs from 'fs'
+import * as fx from 'mkdir-recursive'
 import moment from 'moment'
 
 class Save
@@ -16,7 +17,14 @@ class Save
     date = new Date().getTime()
     epoch = Math.round(date / 1000)
     current_path = "#{Data.home()}/#{Data.active_file()}/index.md"
-    backup_path  = "#{Data.home()}/#{Data.active_file()}/.backups/#{epoch}.md"
+
+    backup_dir   = "#{Data.home()}/#{Data.active_file()}/backups/"
+    backup_path  = "#{backup_dir}/#{epoch}.md"
+
+    # create dir if it don't exist.
+    if !fs.existsSync(backup_dir)
+      fx.mkdirSync backup_dir
+
     fs.copyFile current_path, backup_path, (err) =>
       console.log('copyFile',err) if err
       fs.writeFile current_path, Data.document(), (err)->
