@@ -143,7 +143,8 @@ nav {
   left: 0;
   padding-top: 51px;
   z-index: 200;
-  overflow: auto; }
+  overflow-y: auto;
+  overflow-x: visible; }
   nav a {
     color: darkgray;
     width: 100%;
@@ -174,6 +175,8 @@ nav {
   nav a.asset {
     padding: 6px 16px;
     position: relative; }
+    nav a.asset:hover .img {
+      display: block; }
     nav a.asset .img {
       display: none;
       background-size: contain;
@@ -184,9 +187,7 @@ nav {
       border-left: none;
       background: #fff;
       background-repeat: no-repeat; }
-    nav a.asset:hover img {
-      display: block; }
-    nav a.asset .szie {
+    nav a.asset .size {
       background: rgba(51, 55, 70, 0.7);
       font-size: 12px;
       padding: 4px;

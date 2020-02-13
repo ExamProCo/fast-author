@@ -144,7 +144,8 @@ nav
   left: 0
   padding-top: 51px
   z-index: 200
-  overflow: auto
+  overflow-y: auto
+  overflow-x: visible
   a
     color: rgb(169,169,169)
     width: 100%
@@ -176,6 +177,8 @@ nav
   a.asset
     padding: 6px 16px
     position: relative
+    &:hover .img
+      display: block
     .img
       display: none
       background-size: contain
@@ -186,9 +189,7 @@ nav
       border-left: none
       background: #fff
       background-repeat: no-repeat
-    &:hover img
-      display: block
-    .szie
+    .size
       background: rgba(51,55,70,0.7)
       font-size: 12px
       padding: 4px

@@ -90,7 +90,13 @@ ipc.on('request-assets', function(e,opts){
       // reverse order
       f = files[(files.length-1)-i]
 
-      dimensions = size_of(f)
+      let dimensions
+      try {
+        dimensions = size_of(f)
+      } catch(err) {
+        console.log('eer',err)
+        dimensions = { width: 100,height: 100 }
+      }
       name = f.split(path.sep).pop()
 
 
@@ -99,8 +105,8 @@ ipc.on('request-assets', function(e,opts){
         height: dimensions.height,
         path: f,
         name: name
-      })
-    }
+      }) // push
+    } // for
     win.webContents.send('response-assets',data)
   })
 })
@@ -144,7 +150,6 @@ ipc.on('sharp-border', function(e,opts){
 
 ipc.on('sharp-draw', function(e,opts){
   createDrawingWindow(opts)
-  win_draw.close()
 
   console.log('drawing-border',opts)
   date = new Date().getTime()
@@ -158,6 +163,8 @@ ipc.on('sharp-draw', function(e,opts){
     org_asset: opts.source,
     new_asset: new_asset
   }
+  win_draw.close()
+  win_draw.destroy() // Shouldn't need this but make's it close
   win.webContents.send('response-sharp',data)
 })
 
