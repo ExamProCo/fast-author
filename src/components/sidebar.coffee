@@ -1,6 +1,7 @@
 import * as m from 'mithril'
 import fs from 'fs'
 import Data from 'common/data'
+import Save from 'common/save'
 import TextInsert from 'lib/text_insert'
 import {ipcRenderer as ipc} from 'electron'
 
@@ -14,10 +15,12 @@ export default class Sidebar
       ''
   click:(file)=>
     =>
-      data = fs.readFileSync(Data.markdown_path(file.name))
-      Data.active_file  file.name
-      Data.document data.toString()
-      ipc.send('request-assets',project: Data.active_file())
+      Save.save ()=>
+        console.log('saving')
+        data = fs.readFileSync(Data.markdown_path(file.name))
+        Data.active_file file.name
+        Data.document data.toString()
+        ipc.send('request-assets',project: Data.active_file())
   #add an asset where current cursor is located
   reveal:=>
     ipc.send('assets-reveal',path: "#{Data.home()}/#{Data.active_file()}/assets/")

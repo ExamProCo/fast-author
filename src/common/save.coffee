@@ -13,7 +13,7 @@ class Save
       @save()
     # save every 5 minutes
     , (1000*60)*5
-  save:=>
+  save:(callback)=>
     date = new Date().getTime()
     epoch = Math.round(date / 1000)
     current_path = "#{Data.home()}/#{Data.active_file()}/index.md"
@@ -29,6 +29,7 @@ class Save
       console.log('copyFile',err) if err
       fs.writeFile current_path, Data.document(), (err)->
         console.log('writeFile',err) if err
-    Data.last_saved moment(date).format('MMM D YYYY hh:mm:ss a')
-    m.redraw(true)
+        Data.last_saved moment(date).format('MMM D YYYY hh:mm:ss a')
+        m.redraw(true)
+        callback()
 export default new Save()

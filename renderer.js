@@ -31298,7 +31298,7 @@ Save = class Save {
     }, (1000 * 60) * 5);
   }
 
-  save() {
+  save(callback) {
     var backup_dir, backup_path, current_path, date, epoch;
     date = new Date().getTime();
     epoch = Math.round(date / 1000);
@@ -31308,18 +31308,19 @@ Save = class Save {
     if (!fs__WEBPACK_IMPORTED_MODULE_2___default.a.existsSync(backup_dir)) {
       mkdir_recursive__WEBPACK_IMPORTED_MODULE_3__["mkdirSync"](backup_dir);
     }
-    fs__WEBPACK_IMPORTED_MODULE_2___default.a.copyFile(current_path, backup_path, (err) => {
+    return fs__WEBPACK_IMPORTED_MODULE_2___default.a.copyFile(current_path, backup_path, (err) => {
       if (err) {
         console.log('copyFile', err);
       }
       return fs__WEBPACK_IMPORTED_MODULE_2___default.a.writeFile(current_path, common_data__WEBPACK_IMPORTED_MODULE_0__["default"].document(), function(err) {
         if (err) {
-          return console.log('writeFile', err);
+          console.log('writeFile', err);
         }
+        common_data__WEBPACK_IMPORTED_MODULE_0__["default"].last_saved(moment__WEBPACK_IMPORTED_MODULE_4___default()(date).format('MMM D YYYY hh:mm:ss a'));
+        mithril__WEBPACK_IMPORTED_MODULE_1__["redraw"](true);
+        return callback();
       });
     });
-    common_data__WEBPACK_IMPORTED_MODULE_0__["default"].last_saved(moment__WEBPACK_IMPORTED_MODULE_4___default()(date).format('MMM D YYYY hh:mm:ss a'));
-    return mithril__WEBPACK_IMPORTED_MODULE_1__["redraw"](true);
   }
 
 };
@@ -31502,7 +31503,7 @@ var Article;
       "data-tippy-content": `${this.meta_char()} + B`,
       onclick: this.bold
     }, mithril__WEBPACK_IMPORTED_MODULE_0__('span', 'bold')), mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.red', {
-      "data-tippy-content": `${this.meta_char()} + A`,
+      "data-tippy-content": `${this.meta_char()} + G`,
       onclick: this.red
     }, mithril__WEBPACK_IMPORTED_MODULE_0__('span', 'red')), mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.underline', {
       onclick: this.underline
@@ -31692,10 +31693,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! fs */ "fs");
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var common_data__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! common/data */ "./src/common/data.coffee");
-/* harmony import */ var lib_text_insert__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! lib/text_insert */ "./src/lib/text_insert.coffee");
-/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! electron */ "electron");
-/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(electron__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var common_save__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! common/save */ "./src/common/save.coffee");
+/* harmony import */ var lib_text_insert__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! lib/text_insert */ "./src/lib/text_insert.coffee");
+/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! electron */ "electron");
+/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(electron__WEBPACK_IMPORTED_MODULE_5__);
 var Sidebar;
+
+
 
 
 
@@ -31733,44 +31737,47 @@ var Sidebar;
 
   click(file) {
     return () => {
-      var data;
-      data = fs__WEBPACK_IMPORTED_MODULE_1___default.a.readFileSync(common_data__WEBPACK_IMPORTED_MODULE_2__["default"].markdown_path(file.name));
-      common_data__WEBPACK_IMPORTED_MODULE_2__["default"].active_file(file.name);
-      common_data__WEBPACK_IMPORTED_MODULE_2__["default"].document(data.toString());
-      return electron__WEBPACK_IMPORTED_MODULE_4__["ipcRenderer"].send('request-assets', {
-        project: common_data__WEBPACK_IMPORTED_MODULE_2__["default"].active_file()
+      return common_save__WEBPACK_IMPORTED_MODULE_3__["default"].save(() => {
+        var data;
+        console.log('saving');
+        data = fs__WEBPACK_IMPORTED_MODULE_1___default.a.readFileSync(common_data__WEBPACK_IMPORTED_MODULE_2__["default"].markdown_path(file.name));
+        common_data__WEBPACK_IMPORTED_MODULE_2__["default"].active_file(file.name);
+        common_data__WEBPACK_IMPORTED_MODULE_2__["default"].document(data.toString());
+        return electron__WEBPACK_IMPORTED_MODULE_5__["ipcRenderer"].send('request-assets', {
+          project: common_data__WEBPACK_IMPORTED_MODULE_2__["default"].active_file()
+        });
       });
     };
   }
 
   reveal() {
-    return electron__WEBPACK_IMPORTED_MODULE_4__["ipcRenderer"].send('assets-reveal', {
+    return electron__WEBPACK_IMPORTED_MODULE_5__["ipcRenderer"].send('assets-reveal', {
       path: `${common_data__WEBPACK_IMPORTED_MODULE_2__["default"].home()}/${common_data__WEBPACK_IMPORTED_MODULE_2__["default"].active_file()}/assets/`
     });
   }
 
   reveal_home() {
-    return electron__WEBPACK_IMPORTED_MODULE_4__["ipcRenderer"].send('assets-reveal', {
+    return electron__WEBPACK_IMPORTED_MODULE_5__["ipcRenderer"].send('assets-reveal', {
       path: `${common_data__WEBPACK_IMPORTED_MODULE_2__["default"].home()}/`
     });
   }
 
   reindex() {
-    electron__WEBPACK_IMPORTED_MODULE_4__["ipcRenderer"].send('request-markdown-files');
+    electron__WEBPACK_IMPORTED_MODULE_5__["ipcRenderer"].send('request-markdown-files');
     if (common_data__WEBPACK_IMPORTED_MODULE_2__["default"].active_file()) {
-      return electron__WEBPACK_IMPORTED_MODULE_4__["ipcRenderer"].send('request-assets', {
+      return electron__WEBPACK_IMPORTED_MODULE_5__["ipcRenderer"].send('request-assets', {
         project: common_data__WEBPACK_IMPORTED_MODULE_2__["default"].active_file()
       });
     }
   }
 
   new_project() {
-    return electron__WEBPACK_IMPORTED_MODULE_4__["ipcRenderer"].send('prompt-new');
+    return electron__WEBPACK_IMPORTED_MODULE_5__["ipcRenderer"].send('prompt-new');
   }
 
   add(file) {
     return () => {
-      return lib_text_insert__WEBPACK_IMPORTED_MODULE_3__["default"].at(`![](${file.path})`);
+      return lib_text_insert__WEBPACK_IMPORTED_MODULE_4__["default"].at(`![](${file.path})`);
     };
   }
 
@@ -32018,7 +32025,7 @@ var Textarea;
             return common_data__WEBPACK_IMPORTED_MODULE_3__["default"].selectionEnd(data.selectionEnd);
           } else if (e.key === 'n') {
             return electron__WEBPACK_IMPORTED_MODULE_6__["ipcRenderer"].send('prompt-new');
-          } else if (e.key === 'a') {
+          } else if (e.key === 'g') {
             data = lib_hotkey_wrap__WEBPACK_IMPORTED_MODULE_2__["default"].insert(common_data__WEBPACK_IMPORTED_MODULE_3__["default"].document(), start_at, end_at, "<strong class='r'>", "</strong>");
             common_data__WEBPACK_IMPORTED_MODULE_3__["default"].document(data.value);
             common_data__WEBPACK_IMPORTED_MODULE_3__["default"].selectionStart(data.selectionStart);
