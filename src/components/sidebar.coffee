@@ -35,6 +35,19 @@ export default class Sidebar
   add:(file)=>
     =>
       TextInsert.at "![](#{file.path})"
+  assets:=>
+    m '.assets',
+      m '.title',
+        m 'span.n', 'Assets'
+        m 'span.far.fa-folder', "data-tippy-content": "Reveal Project's Assets Folder", onclick: @reveal
+        m 'em'
+      for file in Data.assets()
+        m 'a.asset', href: '#', onclick: @add(file),
+          m 'span.icon.far fa-file-image'
+          m 'span', file.name
+          m '.img', style: {right: "-#{Math.min(file.width,200)}px"},
+            m 'img', src: file.path
+            m '.size', "#{file.width}x#{file.height}"
   view:->
     [
       m '.nav_heading',
@@ -51,15 +64,5 @@ export default class Sidebar
         for file in Data.files()
           m 'a', href: '#', class: @classes(file), onclick: @click(file), file.name
         if Data.active_file()
-          m '.title',
-            m 'span.n', 'Assets'
-            m 'span.far.fa-folder', "data-tippy-content": "Reveal Project's Assets Folder", onclick: @reveal
-            m 'em'
-        for file in Data.assets()
-          m 'a.asset', href: '#', onclick: @add(file),
-            m 'span.icon.far fa-file-image'
-            m 'span', file.name
-            m '.img', style: {right: "-#{Math.min(file.width,200)}px"},
-              m 'img', src: file.path
-              m '.size', "#{file.width}x#{file.height}"
+          @assets()
     ]

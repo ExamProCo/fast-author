@@ -17,15 +17,15 @@ ipc.on 'response-markdown-files', (e,data)=>
   Data.home data.home
   Data.files data.files
   if Data.active_file() 
-    # reset asset in case where image is inserted but doesn't
-    # have width and height.
-    file = null
-    for d in data.files
-      if d.path is Data.active_file().replace('file://','')
-        file = d
-        break
-    console.log('active file',file)
-    Data.active_file file
+    ## reset asset in case where image is inserted but doesn't
+    ## have width and height.
+    #file = null
+    #for d in data.files
+      #if d.path is Data.active_file().replace('file://','')
+        #file = d
+        #break
+    #console.log('active file',file)
+    #Data.active_file file
   else
     Data.active_file Data.files()[0].path
   m.redraw(true)

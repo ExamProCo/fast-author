@@ -31103,25 +31103,21 @@ common_save__WEBPACK_IMPORTED_MODULE_4__["default"].auto();
 electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].send('request-markdown-files');
 
 electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].on('response-markdown-files', (e, data) => {
-  var d, file, i, len, ref;
   common_data__WEBPACK_IMPORTED_MODULE_3__["default"].home(data.home);
   common_data__WEBPACK_IMPORTED_MODULE_3__["default"].files(data.files);
   if (common_data__WEBPACK_IMPORTED_MODULE_3__["default"].active_file()) {
-    
-    // reset asset in case where image is inserted but doesn't
-    // have width and height.
-    file = null;
-    ref = data.files;
-    for (i = 0, len = ref.length; i < len; i++) {
-      d = ref[i];
-      if (d.path === common_data__WEBPACK_IMPORTED_MODULE_3__["default"].active_file().replace('file://', '')) {
-        file = d;
-        break;
-      }
-    }
-    console.log('active file', file);
-    common_data__WEBPACK_IMPORTED_MODULE_3__["default"].active_file(file);
+
   } else {
+    
+    //# reset asset in case where image is inserted but doesn't
+    //# have width and height.
+    //file = null
+    //for d in data.files
+    //if d.path is Data.active_file().replace('file://','')
+    //file = d
+    //break
+    //console.log('active file',file)
+    //Data.active_file file
     common_data__WEBPACK_IMPORTED_MODULE_3__["default"].active_file(common_data__WEBPACK_IMPORTED_MODULE_3__["default"].files()[0].path);
   }
   return mithril__WEBPACK_IMPORTED_MODULE_0__["redraw"](true);
@@ -31739,6 +31735,7 @@ var Sidebar;
     this.reindex = this.reindex.bind(this);
     this.new_project = this.new_project.bind(this);
     this.add = this.add.bind(this);
+    this.assets = this.assets.bind(this);
   }
 
   oninit(vnode) {
@@ -31799,6 +31796,32 @@ var Sidebar;
     };
   }
 
+  assets() {
+    var file;
+    return mithril__WEBPACK_IMPORTED_MODULE_0__('.assets', mithril__WEBPACK_IMPORTED_MODULE_0__('.title', mithril__WEBPACK_IMPORTED_MODULE_0__('span.n', 'Assets'), mithril__WEBPACK_IMPORTED_MODULE_0__('span.far.fa-folder', {
+      "data-tippy-content": "Reveal Project's Assets Folder",
+      onclick: this.reveal
+    }), mithril__WEBPACK_IMPORTED_MODULE_0__('em')), (function() {
+      var i, len, ref, results;
+      ref = common_data__WEBPACK_IMPORTED_MODULE_2__["default"].assets();
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        file = ref[i];
+        results.push(mithril__WEBPACK_IMPORTED_MODULE_0__('a.asset', {
+          href: '#',
+          onclick: this.add(file)
+        }, mithril__WEBPACK_IMPORTED_MODULE_0__('span.icon.far fa-file-image'), mithril__WEBPACK_IMPORTED_MODULE_0__('span', file.name), mithril__WEBPACK_IMPORTED_MODULE_0__('.img', {
+          style: {
+            right: `-${Math.min(file.width, 200)}px`
+          }
+        }, mithril__WEBPACK_IMPORTED_MODULE_0__('img', {
+          src: file.path
+        }), mithril__WEBPACK_IMPORTED_MODULE_0__('.size', `${file.width}x${file.height}`))));
+      }
+      return results;
+    }).call(this));
+  }
+
   view() {
     var file;
     return [
@@ -31845,48 +31868,7 @@ var Sidebar;
         }
         return results;
       }).call(this),
-      common_data__WEBPACK_IMPORTED_MODULE_2__["default"].active_file() ? mithril__WEBPACK_IMPORTED_MODULE_0__('.title',
-      mithril__WEBPACK_IMPORTED_MODULE_0__('span.n',
-      'Assets'),
-      mithril__WEBPACK_IMPORTED_MODULE_0__('span.far.fa-folder',
-      {
-        "data-tippy-content": "Reveal Project's Assets Folder",
-        onclick: this.reveal
-      }),
-      mithril__WEBPACK_IMPORTED_MODULE_0__('em')) : void 0,
-      (function() {
-        var i,
-      len,
-      ref,
-      results;
-        ref = common_data__WEBPACK_IMPORTED_MODULE_2__["default"].assets();
-        results = [];
-        for (i = 0, len = ref.length; i < len; i++) {
-          file = ref[i];
-          results.push(mithril__WEBPACK_IMPORTED_MODULE_0__('a.asset',
-      {
-            href: '#',
-            onclick: this.add(file)
-          },
-      mithril__WEBPACK_IMPORTED_MODULE_0__('span.icon.far fa-file-image'),
-      mithril__WEBPACK_IMPORTED_MODULE_0__('span',
-      file.name),
-      mithril__WEBPACK_IMPORTED_MODULE_0__('.img',
-      {
-            style: {
-              right: `-${Math.min(file.width,
-      200)}px`
-            }
-          },
-      mithril__WEBPACK_IMPORTED_MODULE_0__('img',
-      {
-            src: file.path
-          }),
-      mithril__WEBPACK_IMPORTED_MODULE_0__('.size',
-      `${file.width}x${file.height}`))));
-        }
-        return results;
-      }).call(this))
+      common_data__WEBPACK_IMPORTED_MODULE_2__["default"].active_file() ? this.assets() : void 0)
     ];
   }
 
