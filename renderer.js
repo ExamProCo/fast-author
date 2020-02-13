@@ -25519,7 +25519,9 @@ electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].send('request-markdown-file
 electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].on('response-markdown-files', (e, data) => {
   common_data__WEBPACK_IMPORTED_MODULE_3__["default"].home(data.home);
   common_data__WEBPACK_IMPORTED_MODULE_3__["default"].files(data.files);
-  common_data__WEBPACK_IMPORTED_MODULE_3__["default"].active_file(common_data__WEBPACK_IMPORTED_MODULE_3__["default"].files()[0].path);
+  if (!common_data__WEBPACK_IMPORTED_MODULE_3__["default"].active_file()) {
+    common_data__WEBPACK_IMPORTED_MODULE_3__["default"].active_file(common_data__WEBPACK_IMPORTED_MODULE_3__["default"].files()[0].path);
+  }
   return mithril__WEBPACK_IMPORTED_MODULE_0__["redraw"](true);
 });
 
@@ -25823,7 +25825,7 @@ var Article;
     // x, y, width, height
     ctx.rect(0, 0, asset.width, asset.height);
     ctx.stroke();
-    path = "/Users/andrew/Desktop/out3.png";
+    path = "/tmp/save-border.png";
     return fs__WEBPACK_IMPORTED_MODULE_8___default.a.writeFile(path, el.toDataURL().replace(/^data:image\/png;base64,/, ""), 'base64', function(err) {
       console.log(err);
       return electron__WEBPACK_IMPORTED_MODULE_9__["ipcRenderer"].send('sharp-border', {
@@ -26059,6 +26061,8 @@ var Sidebar;
     //add an asset where current cursor is located
     this.reveal = this.reveal.bind(this);
     this.reveal_home = this.reveal_home.bind(this);
+    this.reindex = this.reindex.bind(this);
+    this.new_project = this.new_project.bind(this);
     this.add = this.add.bind(this);
   }
 
@@ -26098,6 +26102,19 @@ var Sidebar;
     });
   }
 
+  reindex() {
+    electron__WEBPACK_IMPORTED_MODULE_4__["ipcRenderer"].send('request-markdown-files');
+    if (common_data__WEBPACK_IMPORTED_MODULE_2__["default"].active_file()) {
+      return electron__WEBPACK_IMPORTED_MODULE_4__["ipcRenderer"].send('request-assets', {
+        project: common_data__WEBPACK_IMPORTED_MODULE_2__["default"].active_file()
+      });
+    }
+  }
+
+  new_project() {
+    return electron__WEBPACK_IMPORTED_MODULE_4__["ipcRenderer"].send('prompt-new');
+  }
+
   add(file) {
     return () => {
       return lib_text_insert__WEBPACK_IMPORTED_MODULE_3__["default"].at(`![](${file.path})`);
@@ -26106,42 +26123,89 @@ var Sidebar;
 
   view() {
     var file;
-    return mithril__WEBPACK_IMPORTED_MODULE_0__('nav', mithril__WEBPACK_IMPORTED_MODULE_0__('.title', mithril__WEBPACK_IMPORTED_MODULE_0__('span.n', 'Recent Projects'), mithril__WEBPACK_IMPORTED_MODULE_0__('span.far.fa-folder', {
-      onclick: this.reveal_home
-    }), mithril__WEBPACK_IMPORTED_MODULE_0__('em')), (function() {
-      var i, len, ref, results;
-      ref = common_data__WEBPACK_IMPORTED_MODULE_2__["default"].files();
-      results = [];
-      for (i = 0, len = ref.length; i < len; i++) {
-        file = ref[i];
-        results.push(mithril__WEBPACK_IMPORTED_MODULE_0__('a', {
-          href: '#',
-          class: this.classes(file),
-          onclick: this.click(file)
-        }, file.name));
-      }
-      return results;
-    }).call(this), common_data__WEBPACK_IMPORTED_MODULE_2__["default"].active_file() ? mithril__WEBPACK_IMPORTED_MODULE_0__('.title', mithril__WEBPACK_IMPORTED_MODULE_0__('span.n', 'Assets'), mithril__WEBPACK_IMPORTED_MODULE_0__('span.far.fa-folder', {
-      onclick: this.reveal
-    }), mithril__WEBPACK_IMPORTED_MODULE_0__('em')) : void 0, (function() {
-      var i, len, ref, results;
-      ref = common_data__WEBPACK_IMPORTED_MODULE_2__["default"].assets();
-      results = [];
-      for (i = 0, len = ref.length; i < len; i++) {
-        file = ref[i];
-        results.push(mithril__WEBPACK_IMPORTED_MODULE_0__('a.asset', {
-          href: '#',
-          onclick: this.add(file)
-        }, mithril__WEBPACK_IMPORTED_MODULE_0__('span.icon.far fa-file-image'), mithril__WEBPACK_IMPORTED_MODULE_0__('span', file.name), mithril__WEBPACK_IMPORTED_MODULE_0__('.img', {
-          style: {
-            right: `-${Math.min(file.width, 200)}px`
-          }
-        }, mithril__WEBPACK_IMPORTED_MODULE_0__('img', {
-          src: file.path
-        }), mithril__WEBPACK_IMPORTED_MODULE_0__('.size', `${file.width}x${file.height}`))));
-      }
-      return results;
-    }).call(this));
+    return [
+      mithril__WEBPACK_IMPORTED_MODULE_0__('.nav_heading',
+      mithril__WEBPACK_IMPORTED_MODULE_0__('.btn.refresh',
+      {
+        onclick: this.reindex
+      },
+      mithril__WEBPACK_IMPORTED_MODULE_0__('span.fas.fa-sync')),
+      mithril__WEBPACK_IMPORTED_MODULE_0__('.btn.new',
+      {
+        onclick: this.new_project
+      },
+      mithril__WEBPACK_IMPORTED_MODULE_0__('span.fas.fa-plus')),
+      mithril__WEBPACK_IMPORTED_MODULE_0__('em')),
+      mithril__WEBPACK_IMPORTED_MODULE_0__('nav',
+      mithril__WEBPACK_IMPORTED_MODULE_0__('.title',
+      mithril__WEBPACK_IMPORTED_MODULE_0__('span.n',
+      'Recent Projects'),
+      mithril__WEBPACK_IMPORTED_MODULE_0__('span.far.fa-folder',
+      {
+        onclick: this.reveal_home
+      }),
+      mithril__WEBPACK_IMPORTED_MODULE_0__('em')),
+      (function() {
+        var i,
+      len,
+      ref,
+      results;
+        ref = common_data__WEBPACK_IMPORTED_MODULE_2__["default"].files();
+        results = [];
+        for (i = 0, len = ref.length; i < len; i++) {
+          file = ref[i];
+          results.push(mithril__WEBPACK_IMPORTED_MODULE_0__('a',
+      {
+            href: '#',
+            class: this.classes(file),
+            onclick: this.click(file)
+          },
+      file.name));
+        }
+        return results;
+      }).call(this),
+      common_data__WEBPACK_IMPORTED_MODULE_2__["default"].active_file() ? mithril__WEBPACK_IMPORTED_MODULE_0__('.title',
+      mithril__WEBPACK_IMPORTED_MODULE_0__('span.n',
+      'Assets'),
+      mithril__WEBPACK_IMPORTED_MODULE_0__('span.far.fa-folder',
+      {
+        onclick: this.reveal
+      }),
+      mithril__WEBPACK_IMPORTED_MODULE_0__('em')) : void 0,
+      (function() {
+        var i,
+      len,
+      ref,
+      results;
+        ref = common_data__WEBPACK_IMPORTED_MODULE_2__["default"].assets();
+        results = [];
+        for (i = 0, len = ref.length; i < len; i++) {
+          file = ref[i];
+          results.push(mithril__WEBPACK_IMPORTED_MODULE_0__('a.asset',
+      {
+            href: '#',
+            onclick: this.add(file)
+          },
+      mithril__WEBPACK_IMPORTED_MODULE_0__('span.icon.far fa-file-image'),
+      mithril__WEBPACK_IMPORTED_MODULE_0__('span',
+      file.name),
+      mithril__WEBPACK_IMPORTED_MODULE_0__('.img',
+      {
+            style: {
+              right: `-${Math.min(file.width,
+      200)}px`
+            }
+          },
+      mithril__WEBPACK_IMPORTED_MODULE_0__('img',
+      {
+            src: file.path
+          }),
+      mithril__WEBPACK_IMPORTED_MODULE_0__('.size',
+      `${file.width}x${file.height}`))));
+        }
+        return results;
+      }).call(this))
+    ];
   }
 
 });

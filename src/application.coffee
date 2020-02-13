@@ -15,7 +15,8 @@ ipc.send('request-markdown-files')
 ipc.on 'response-markdown-files', (e,data)=>
   Data.home data.home
   Data.files data.files
-  Data.active_file Data.files()[0].path
+  unless Data.active_file()
+    Data.active_file Data.files()[0].path
   m.redraw(true)
 ipc.on 'response-assets', (e,data)=>
   Data.assets data.files
