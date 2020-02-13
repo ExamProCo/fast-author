@@ -7,6 +7,7 @@ import TextInsert from 'lib/text_insert'
 import {ipcRenderer as ipc} from 'electron'
 import fs from 'fs'
 import path from 'path'
+import os from 'os'
 
 export default class Textarea
   constructor:->
@@ -58,7 +59,15 @@ export default class Textarea
         els = document.querySelectorAll('.preview img')
         el.classList.remove('selected') for el in els
       onkeydown: (e)=>
-        Data.meta(true)  if e.key is 'Meta'
+        console.log os.platform()
+
+        meta =
+        if os.platform() is 'darwin'
+          'Meta'
+        else
+          'Control'
+
+        Data.meta(true)  if e.key is meta
         Data.shift(true) if e.key is 'Shift'
         if Data.meta()
           start_at = e.target.selectionStart

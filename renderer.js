@@ -26235,7 +26235,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! path */ "path");
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! os */ "os");
+/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(os__WEBPACK_IMPORTED_MODULE_9__);
 var Textarea;
+
+
 
 
 
@@ -26332,8 +26336,10 @@ var Textarea;
         return results;
       },
       onkeydown: (e) => {
-        var data, end_at, start_at;
-        if (e.key === 'Meta') {
+        var data, end_at, meta, start_at;
+        console.log(os__WEBPACK_IMPORTED_MODULE_9___default.a.platform());
+        meta = os__WEBPACK_IMPORTED_MODULE_9___default.a.platform() === 'darwin' ? 'Meta' : 'Control';
+        if (e.key === meta) {
           common_data__WEBPACK_IMPORTED_MODULE_3__["default"].meta(true);
         }
         if (e.key === 'Shift') {
@@ -26690,6 +26696,17 @@ module.exports = require("electron");
 /***/ (function(module, exports) {
 
 module.exports = require("fs");
+
+/***/ }),
+
+/***/ "os":
+/*!*********************!*\
+  !*** external "os" ***!
+  \*********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("os");
 
 /***/ }),
 
