@@ -173,7 +173,11 @@ ipc.on('assets-reveal', function(e,opts){
 })
 
 ipc.on('toggle-fullscreen', function(e,opts){
-  win.setFullScreen(true)
+  if (win.isFullScreen()){
+    win.setFullScreen(false)
+  } else {
+    win.setFullScreen(true)
+  }
 })
 
 ipc.on('drawing-window',function(e,opts){
