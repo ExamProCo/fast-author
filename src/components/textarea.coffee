@@ -59,14 +59,11 @@ export default class Textarea
         els = document.querySelectorAll('.preview img')
         el.classList.remove('selected') for el in els
       onkeydown: (e)=>
-        console.log os.platform()
-
         meta =
         if os.platform() is 'darwin'
           'Meta'
         else
           'Control'
-
         Data.meta(true)  if e.key is meta
         Data.shift(true) if e.key is 'Shift'
         if Data.meta()
@@ -84,8 +81,6 @@ export default class Textarea
             Data.document       data.value
             Data.selectionStart data.selectionStart
             Data.selectionEnd   data.selectionEnd
-          else if e.key is 'f'
-            ipc.send('toggle-fullscreen')
           else if e.key is 'n'
             ipc.send('prompt-new')
           else if e.key is 'a'

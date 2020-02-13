@@ -3,6 +3,7 @@ import ArticleView from 'views/article'
 import {ipcRenderer as ipc} from 'electron'
 import Data from 'common/data'
 import Save from 'common/save'
+import os from 'os'
 
 routes =
   '/': ArticleView
@@ -33,3 +34,22 @@ ipc.on 'response-new-project', (e,data)=>
   console.log data.path
   m.redraw(true)
 
+
+# global hotkeys
+document.addEventListener 'keydown', (e)=>
+  meta =
+  if os.platform() is 'darwin'
+    'Meta'
+  else
+    'Control'
+  Data.meta(true)  if e.key is meta
+  Data.shift(true) if e.key is 'Shift'
+  if Data.meta()
+    if e.key is 'f'
+      ipc.send('toggle-fullscreen')
+    else if e.key is 'p'
+      Data.publisher_preview !Data.publisher_preview()
+      m.redraw(true)
+document.addEventListener 'keyup', (e)=>
+  Data.meta(false)  if e.key is 'Meta'
+  Data.shift(false) if e.key is 'Shift'

@@ -64,6 +64,8 @@ export default class Article
   image_paint:=>
     asset = Data.get_asset()
     ipc.send('drawing-window',asset)
+  fullscreen:=>
+    ipc.send('toggle-fullscreen')
   publisher_preview:=>
     Data.publisher_preview !Data.publisher_preview()
   save:=>
@@ -74,8 +76,6 @@ export default class Article
     else
       'Ctrl'
   subheader:=>
-
-
     m 'section.sub',
       m '.editor',
         m 'span.lbl', 'Editor'
@@ -109,8 +109,10 @@ export default class Article
       m 'section.main',
         m '.title', contenteditable: true,
           m.trust Data.active_file()
-        m 'span.btn.save', "data-tippy-content": "Publisher Preview", onclick: @publisher_preview,
+        m 'span.btn.save', "data-tippy-content": "Publisher Preview (#{@meta_char()} + P)", onclick: @publisher_preview,
           m 'span.far.fa-eye'
+        m 'span.btn.fullscreen', "data-tippy-content": "Fullscreen (#{@meta_char()} + F)", onclick: @fullscreen,
+          m 'span.fas.fa-window-maximize'
         m 'em'
       unless Data.publisher_preview()
         @subheader()
