@@ -8,6 +8,7 @@ import HotkeyHeading from 'lib/hotkey_heading'
 import HotkeyWrap from 'lib/hotkey_wrap'
 import fs from 'fs'
 import {ipcRenderer as ipc} from 'electron'
+import os from 'os'
 
 
 export default class Article
@@ -67,32 +68,39 @@ export default class Article
     Data.publisher_preview !Data.publisher_preview()
   save:=>
     Save.save()
+  meta_char:=>
+    if os.platform() is 'darwin'
+      '⌘'
+    else
+      'Ctrl'
   subheader:=>
+
+
     m 'section.sub',
       m '.editor',
         m 'span.lbl', 'Editor'
-        m 'span.btn.save', "data-tippy-content": 'Save', onclick: @save,
+        m 'span.btn.save', "data-tippy-content": "#{@meta_char()} + S", onclick: @save,
           m 'span.far.fa-save'
-        m 'span.btn.bold', onclick: @bold,
+        m 'span.btn.bold', "data-tippy-content": "#{@meta_char()} + B", onclick: @bold,
           m 'span', 'bold'
-        m 'span.btn.red', onclick: @red,
+        m 'span.btn.red', "data-tippy-content": "#{@meta_char()} + A", onclick: @red,
           m 'span', 'red'
         m 'span.btn.underline', onclick: @underline,
           m 'span', 'underline'
-        m 'span.btn.highlight', onclick: @highlight,
+        m 'span.btn.highlight', "data-tippy-content": "#{@meta_char()} + D", onclick: @highlight,
           m 'span', 'highlight'
         m 'em'
       m '.preview',
         m 'span.lbl', 'Preview'
         if Data.active_asset()
           [
-            m 'span.btn.crop', onclick: @image_crop,
+            m 'span.btn.crop', "data-tippy-content": "Crop Image", onclick: @image_crop,
               m 'span.fas.fa-crop-alt'
-            m 'span.btn.crop', onclick: @image_resize,
+            m 'span.btn.crop', "data-tippy-content": "Resize Image", onclick: @image_resize,
               m 'span.fas.fa-compress'
-            m 'span.btn.border', onclick: @image_border,
+            m 'span.btn.border', "data-tippy-content": "Border Image", onclick: @image_border,
               m 'span.fas.fa-border-style'
-            m 'span.btn.paint', onclick: @image_paint,
+            m 'span.btn.paint', "data-tippy-content": "Edit Image", onclick: @image_paint,
               m 'span.fas.fa-paint-brush'
           ]
       m 'em'
@@ -101,7 +109,7 @@ export default class Article
       m 'section.main',
         m '.title', contenteditable: true,
           m.trust Data.active_file()
-        m 'span.btn.save', onclick: @publisher_preview,
+        m 'span.btn.save', "data-tippy-content": "Publisher Preview", onclick: @publisher_preview,
           m 'span.far.fa-eye'
         m 'em'
       unless Data.publisher_preview()

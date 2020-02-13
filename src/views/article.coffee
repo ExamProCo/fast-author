@@ -6,8 +6,9 @@ import Data from 'common/data'
 import tippy from 'tippy.js'
 
 export default class ArticleView
+  onupdate:(vnode)->
+    tippy('[data-tippy-content]')
   oncreate:(vnode)->
-    console.log('tippy')
     tippy('[data-tippy-content]')
   classes:=>
     if Data.publisher_preview()

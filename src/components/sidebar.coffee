@@ -35,22 +35,22 @@ export default class Sidebar
   view:->
     [
       m '.nav_heading',
-        m '.btn.refresh', onclick: @reindex,
+        m '.btn.refresh', "data-tippy-content": "Refresh Sidebar", onclick: @reindex,
           m 'span.fas.fa-sync'
-        m '.btn.new', onclick: @new_project,
+        m '.btn.new', "data-tippy-content": "New Project", onclick: @new_project,
           m 'span.fas.fa-plus'
         m 'em'
       m 'nav',
         m '.title',
             m 'span.n', 'Recent Projects'
-            m 'span.far.fa-folder', onclick: @reveal_home
+            m 'span.far.fa-folder', "data-tippy-content": "Reveal Projects Folder", onclick: @reveal_home
             m 'em'
         for file in Data.files()
           m 'a', href: '#', class: @classes(file), onclick: @click(file), file.name
         if Data.active_file()
           m '.title',
             m 'span.n', 'Assets'
-            m 'span.far.fa-folder', onclick: @reveal
+            m 'span.far.fa-folder', "data-tippy-content": "Reveal Project's Assets Folder", onclick: @reveal
             m 'em'
         for file in Data.assets()
           m 'a.asset', href: '#', onclick: @add(file),
