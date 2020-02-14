@@ -69,5 +69,5 @@ document.addEventListener 'keydown', (e)=>
       Data.line_wrap !Data.line_wrap()
       m.redraw(true)
 document.addEventListener 'keyup', (e)=>
-  Data.meta(false)  if e.key is 'Meta'
-  Data.shift(false) if e.key is 'Shift'
+  Data.meta(false)
+  Data.shift(false)

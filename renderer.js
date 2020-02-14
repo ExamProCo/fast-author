@@ -31174,12 +31174,8 @@ document.addEventListener('keydown', (e) => {
 });
 
 document.addEventListener('keyup', (e) => {
-  if (e.key === 'Meta') {
-    common_data__WEBPACK_IMPORTED_MODULE_3__["default"].meta(false);
-  }
-  if (e.key === 'Shift') {
-    return common_data__WEBPACK_IMPORTED_MODULE_3__["default"].shift(false);
-  }
+  common_data__WEBPACK_IMPORTED_MODULE_3__["default"].meta(false);
+  return common_data__WEBPACK_IMPORTED_MODULE_3__["default"].shift(false);
 });
 
 
