@@ -31,5 +31,5 @@ class Save
         console.log('writeFile',err) if err
         Data.last_saved moment(date).format('MMM D YYYY hh:mm:ss a')
         m.redraw(true)
-        callback()
+        callback() if callback
 export default new Save()

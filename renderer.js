@@ -31339,7 +31339,9 @@ Save = class Save {
         }
         common_data__WEBPACK_IMPORTED_MODULE_0__["default"].last_saved(moment__WEBPACK_IMPORTED_MODULE_4___default()(date).format('MMM D YYYY hh:mm:ss a'));
         mithril__WEBPACK_IMPORTED_MODULE_1__["redraw"](true);
-        return callback();
+        if (callback) {
+          return callback();
+        }
       });
     });
   }

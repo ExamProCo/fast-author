@@ -221,12 +221,16 @@ nav {
   display: block;
   border: solid 1px white; }
 
-.markdown pre {
+.markdown code {
   background: #d6dbe6;
   border-radius: 4px;
-  padding: 16px;
   font-family: Verdana;
-  overflow: auto; }
+  padding: 1px 4px; }
+
+.markdown pre code {
+  padding: 16px;
+  overflow: auto;
+  display: block; }
 
 .b {
   font-weight: 600; }
