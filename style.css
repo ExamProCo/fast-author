@@ -54,28 +54,34 @@ main.ppreview {
   box-shadow: 1px 1px 0px #c2c2c2; }
 
 .pane {
-  float: left;
-  width: 50%;
   height: 100%;
   padding: 24px;
   overflow: auto; }
 
-.editor {
-  float: left;
-  border-right: solid 1px #c8c8c8;
-  outline: none;
-  white-space: nowrap; }
-
 article {
   height: 100%; }
+  article.split .panes .pane {
+    float: left;
+    width: 50%; }
+  article.split .panes textarea.editor {
+    border-right: solid 1px #c8c8c8; }
+  article.split section.sub div {
+    float: left;
+    width: 50%; }
+    article.split section.sub div:first-child {
+      border-right: solid 1px #c8c8c8; }
 
 .panes {
   height: 100%; }
 
-textarea {
+textarea.editor {
   font-size: 14px;
   border: none;
-  resize: none; }
+  resize: none;
+  outline: none;
+  width: 100%; }
+  textarea.editor.line_wrap {
+    white-space: nowrap; }
 
 header {
   width: 100%;
@@ -91,16 +97,12 @@ header {
       float: left; }
     header section.main .btn {
       margin-top: 10px;
-      margin-right: 16px; }
+      margin-right: 8px; }
   header section.sub {
     background: whitesmoke;
     border-bottom: solid 1px #c8c8c8; }
     header section.sub div {
-      padding: 8px 16px;
-      float: left;
-      width: 50%; }
-    header section.sub div:first-child {
-      border-right: solid 1px #c8c8c8; }
+      padding: 8px 16px; }
   header section {
     top: 0;
     left: 0; }

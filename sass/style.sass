@@ -55,28 +55,37 @@ main.ppreview
   box-shadow: 1px 1px 0px #c2c2c2
 
 .pane
-  float: left
-  width: 50%
   height: 100%
   padding: 24px
   overflow: auto
 
-.editor
-  float: left
-  border-right: solid 1px rgb(200,200,200)
-  outline: none
-  white-space: nowrap
-
 article
   height: 100%
+  &.split
+    .panes
+      .pane
+        float: left
+        width: 50%
+      textarea.editor
+        border-right: solid 1px rgb(200,200,200)
+    section.sub
+      div
+        float: left
+        width: 50%
+        &:first-child
+          border-right: solid 1px rgb(200,200,200)
 
 .panes
   height: 100%
 
-textarea
+textarea.editor
   font-size: 14px
   border: none
   resize: none
+  outline: none
+  width: 100%
+  &.line_wrap
+    white-space: nowrap
 
 header 
   width: 100%
@@ -92,16 +101,12 @@ header
       float: left
     .btn
       margin-top: 10px
-      margin-right: 16px
+      margin-right: 8px
   section.sub 
     background: rgb(245,245,245)
     border-bottom: solid 1px rgb(200,200,200)
     div
       padding: 8px 16px
-      float: left
-      width: 50%
-    div:first-child
-      border-right: solid 1px rgb(200,200,200)
   section
     top: 0
     left: 0

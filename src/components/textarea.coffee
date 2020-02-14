@@ -21,8 +21,13 @@ export default class Textarea
     if Data.selectionEnd() != false
       vnode.dom.selectionEnd = Data.selectionEnd()
       Data.selectionEnd false
+  classes:=>
+    classes = []
+    classes.push 'line_wrap' if Data.line_wrap()
+    classes.join(' ')
   attrs:=>
     attrs =
+      class: @classes() 
       ondrop:(ev)=>
         ev.preventDefault()
         for file in ev.dataTransfer.files

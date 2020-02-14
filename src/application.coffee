@@ -62,6 +62,12 @@ document.addEventListener 'keydown', (e)=>
       m.redraw(true)
     else if e.key is 'n'
       ipc.send('prompt-new')
+    else if e.key is 's' && Data.shift()
+      Data.splitview !Data.splitview()
+      m.redraw(true)
+    else if e.key is 'w' && Data.shift()
+      Data.line_wrap !Data.line_wrap()
+      m.redraw(true)
 document.addEventListener 'keyup', (e)=>
   Data.meta(false)  if e.key is 'Meta'
   Data.shift(false) if e.key is 'Shift'

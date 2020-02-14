@@ -31163,6 +31163,12 @@ document.addEventListener('keydown', (e) => {
       return mithril__WEBPACK_IMPORTED_MODULE_0__["redraw"](true);
     } else if (e.key === 'n') {
       return electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].send('prompt-new');
+    } else if (e.key === 's' && common_data__WEBPACK_IMPORTED_MODULE_3__["default"].shift()) {
+      common_data__WEBPACK_IMPORTED_MODULE_3__["default"].splitview(!common_data__WEBPACK_IMPORTED_MODULE_3__["default"].splitview());
+      return mithril__WEBPACK_IMPORTED_MODULE_0__["redraw"](true);
+    } else if (e.key === 'w' && common_data__WEBPACK_IMPORTED_MODULE_3__["default"].shift()) {
+      common_data__WEBPACK_IMPORTED_MODULE_3__["default"].line_wrap(!common_data__WEBPACK_IMPORTED_MODULE_3__["default"].line_wrap());
+      return mithril__WEBPACK_IMPORTED_MODULE_0__["redraw"](true);
     }
   }
 });
@@ -31221,6 +31227,11 @@ Data = class Data {
     this.meta = mithril_stream__WEBPACK_IMPORTED_MODULE_0___default()(false);
     // whether the shift key is behind held
     this.shift = mithril_stream__WEBPACK_IMPORTED_MODULE_0___default()(false);
+    // whether to wrap or not wrap lines in textarea
+    this.line_wrap = mithril_stream__WEBPACK_IMPORTED_MODULE_0___default()(false);
+    
+    // whether to split the view (show both editor or preview, or just editor)
+    this.splitview = mithril_stream__WEBPACK_IMPORTED_MODULE_0___default()(true);
     // when true will hide editor and center preview.
     this.publisher_preview = mithril_stream__WEBPACK_IMPORTED_MODULE_0___default()(false);
     // the start and end select for markdown textarea
@@ -31404,11 +31415,16 @@ var Article;
     this.image_drop = this.image_drop.bind(this);
     this.image_paint = this.image_paint.bind(this);
     this.fullscreen = this.fullscreen.bind(this);
+    this.toggle_line_wrap = this.toggle_line_wrap.bind(this);
     this.publisher_preview = this.publisher_preview.bind(this);
+    this.splitview = this.splitview.bind(this);
     this.save = this.save.bind(this);
     this.meta_char = this.meta_char.bind(this);
+    this.subeditor = this.subeditor.bind(this);
+    this.subpreview = this.subpreview.bind(this);
     this.subheader = this.subheader.bind(this);
     this.header = this.header.bind(this);
+    this.classes_article = this.classes_article.bind(this);
     this.panes = this.panes.bind(this);
     this.md = new remarkable__WEBPACK_IMPORTED_MODULE_2__["Remarkable"]({
       html: true
@@ -31493,8 +31509,16 @@ var Article;
     return electron__WEBPACK_IMPORTED_MODULE_9__["ipcRenderer"].send('toggle-fullscreen');
   }
 
+  toggle_line_wrap() {
+    return common_data__WEBPACK_IMPORTED_MODULE_4__["default"].line_wrap(!common_data__WEBPACK_IMPORTED_MODULE_4__["default"].line_wrap());
+  }
+
   publisher_preview() {
     return common_data__WEBPACK_IMPORTED_MODULE_4__["default"].publisher_preview(!common_data__WEBPACK_IMPORTED_MODULE_4__["default"].publisher_preview());
+  }
+
+  splitview() {
+    return common_data__WEBPACK_IMPORTED_MODULE_4__["default"].splitview(!common_data__WEBPACK_IMPORTED_MODULE_4__["default"].splitview());
   }
 
   save() {
@@ -31509,22 +31533,32 @@ var Article;
     }
   }
 
-  subheader() {
-    return mithril__WEBPACK_IMPORTED_MODULE_0__('section.sub', mithril__WEBPACK_IMPORTED_MODULE_0__('.editor', mithril__WEBPACK_IMPORTED_MODULE_0__('span.lbl', 'Editor'), mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.save', {
-      "data-tippy-content": `${this.meta_char()} + S`,
+  subeditor() {
+    return mithril__WEBPACK_IMPORTED_MODULE_0__('.editor', mithril__WEBPACK_IMPORTED_MODULE_0__('span.lbl', 'Editor'), mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.save', {
+      "data-tippy-content": `Save (${this.meta_char()}S)`,
       onclick: this.save
     }, mithril__WEBPACK_IMPORTED_MODULE_0__('span.far.fa-save')), mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.bold', {
-      "data-tippy-content": `${this.meta_char()} + B`,
+      "data-tippy-content": `Bold (${this.meta_char()}B)`,
       onclick: this.bold
-    }, mithril__WEBPACK_IMPORTED_MODULE_0__('span', 'bold')), mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.red', {
-      "data-tippy-content": `${this.meta_char()} + G`,
+    }, mithril__WEBPACK_IMPORTED_MODULE_0__('span', 'A')), mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.red', {
+      "data-tippy-content": `Red (${this.meta_char()}G)`,
       onclick: this.red
-    }, mithril__WEBPACK_IMPORTED_MODULE_0__('span', 'red')), mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.underline', {
-      onclick: this.underline
-    }, mithril__WEBPACK_IMPORTED_MODULE_0__('span', 'underline')), mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.highlight', {
-      "data-tippy-content": `${this.meta_char()} + D`,
+    //m 'span.btn.underline', onclick: @underline,
+    //m 'span', 'A'
+    }, mithril__WEBPACK_IMPORTED_MODULE_0__('span', 'A')), mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.highlight', {
+      "data-tippy-content": `Highlight (${this.meta_char()}D)`,
       onclick: this.highlight
-    }, mithril__WEBPACK_IMPORTED_MODULE_0__('span', 'highlight')), mithril__WEBPACK_IMPORTED_MODULE_0__('em')), mithril__WEBPACK_IMPORTED_MODULE_0__('.preview', mithril__WEBPACK_IMPORTED_MODULE_0__('span.lbl', 'Preview'), common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_asset() ? [
+    }, mithril__WEBPACK_IMPORTED_MODULE_0__('span', 'A')), mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.line-wrap', {
+      "data-tippy-content": `Toggle Line Wrap (${this.meta_char()}⇧W)`,
+      onclick: this.toggle_line_wrap
+    }, mithril__WEBPACK_IMPORTED_MODULE_0__('span.fas.fa-exchange-alt')), mithril__WEBPACK_IMPORTED_MODULE_0__('em'));
+  }
+
+  subpreview() {
+    if (!common_data__WEBPACK_IMPORTED_MODULE_4__["default"].splitview()) {
+      return;
+    }
+    return mithril__WEBPACK_IMPORTED_MODULE_0__('.preview', mithril__WEBPACK_IMPORTED_MODULE_0__('span.lbl', 'Preview'), common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_asset() ? [
       mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.crop',
       {
         "data-tippy-content": "Crop Image",
@@ -31549,27 +31583,48 @@ var Article;
         onclick: this.image_paint
       },
       mithril__WEBPACK_IMPORTED_MODULE_0__('span.fas.fa-paint-brush'))
-    ] : void 0), mithril__WEBPACK_IMPORTED_MODULE_0__('em'));
+    ] : void 0, mithril__WEBPACK_IMPORTED_MODULE_0__('em'));
+  }
+
+  subheader() {
+    if (common_data__WEBPACK_IMPORTED_MODULE_4__["default"].publisher_preview()) {
+      return;
+    }
+    return mithril__WEBPACK_IMPORTED_MODULE_0__('section.sub', this.subeditor(), this.subpreview(), mithril__WEBPACK_IMPORTED_MODULE_0__('em'));
   }
 
   header() {
     return mithril__WEBPACK_IMPORTED_MODULE_0__('header', mithril__WEBPACK_IMPORTED_MODULE_0__('section.main', mithril__WEBPACK_IMPORTED_MODULE_0__('.title', {
       contenteditable: true
     }, mithril__WEBPACK_IMPORTED_MODULE_0__["trust"](common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_file())), mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.save', {
-      "data-tippy-content": `Publisher Preview (${this.meta_char()} + P)`,
+      "data-tippy-content": `Publisher Preview (${this.meta_char()}P)`,
       onclick: this.publisher_preview
     }, mithril__WEBPACK_IMPORTED_MODULE_0__('span.far.fa-eye')), mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.fullscreen', {
-      "data-tippy-content": `Fullscreen (${this.meta_char()} + F)`,
+      "data-tippy-content": `Fullscreen (${this.meta_char()}F)`,
       onclick: this.fullscreen
-    }, mithril__WEBPACK_IMPORTED_MODULE_0__('span.fas.fa-window-maximize')), mithril__WEBPACK_IMPORTED_MODULE_0__('em')), !common_data__WEBPACK_IMPORTED_MODULE_4__["default"].publisher_preview() ? this.subheader() : void 0);
+    }, mithril__WEBPACK_IMPORTED_MODULE_0__('span.fas.fa-window-maximize')), mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.divide', {
+      "data-tippy-content": `Split view (${this.meta_char()}⇧S)`,
+      onclick: this.splitview
+    }, mithril__WEBPACK_IMPORTED_MODULE_0__('span.fas.fa-columns')), mithril__WEBPACK_IMPORTED_MODULE_0__('em')), this.subheader());
+  }
+
+  classes_article() {
+    var classes;
+    classes = [];
+    if (common_data__WEBPACK_IMPORTED_MODULE_4__["default"].splitview()) {
+      classes.push('split');
+    }
+    return classes.join(' ');
   }
 
   panes() {
-    return mithril__WEBPACK_IMPORTED_MODULE_0__('.panes', mithril__WEBPACK_IMPORTED_MODULE_0__(components_textarea__WEBPACK_IMPORTED_MODULE_1__["default"]), mithril__WEBPACK_IMPORTED_MODULE_0__(components_preview__WEBPACK_IMPORTED_MODULE_3__["default"]), mithril__WEBPACK_IMPORTED_MODULE_0__('em'));
+    return mithril__WEBPACK_IMPORTED_MODULE_0__('.panes', mithril__WEBPACK_IMPORTED_MODULE_0__(components_textarea__WEBPACK_IMPORTED_MODULE_1__["default"]), common_data__WEBPACK_IMPORTED_MODULE_4__["default"].splitview() ? mithril__WEBPACK_IMPORTED_MODULE_0__(components_preview__WEBPACK_IMPORTED_MODULE_3__["default"]) : void 0, mithril__WEBPACK_IMPORTED_MODULE_0__('em'));
   }
 
   view() {
-    return mithril__WEBPACK_IMPORTED_MODULE_0__('article', this.header(), common_data__WEBPACK_IMPORTED_MODULE_4__["default"].publisher_preview() ? mithril__WEBPACK_IMPORTED_MODULE_0__('.publisher_preview.markdown', mithril__WEBPACK_IMPORTED_MODULE_0__["trust"](this.md.render(common_data__WEBPACK_IMPORTED_MODULE_4__["default"].document()))) : this.panes());
+    return mithril__WEBPACK_IMPORTED_MODULE_0__('article', {
+      class: this.classes_article()
+    }, this.header(), common_data__WEBPACK_IMPORTED_MODULE_4__["default"].publisher_preview() ? mithril__WEBPACK_IMPORTED_MODULE_0__('.publisher_preview.markdown', mithril__WEBPACK_IMPORTED_MODULE_0__["trust"](this.md.render(common_data__WEBPACK_IMPORTED_MODULE_4__["default"].document()))) : this.panes());
   }
 
 });
@@ -31925,6 +31980,7 @@ var Textarea;
 
 /* harmony default export */ __webpack_exports__["default"] = (Textarea = class Textarea {
   constructor() {
+    this.classes = this.classes.bind(this);
     this.attrs = this.attrs.bind(this);
     this.view = this.view.bind(this);
   }
@@ -31943,9 +31999,19 @@ var Textarea;
     }
   }
 
+  classes() {
+    var classes;
+    classes = [];
+    if (common_data__WEBPACK_IMPORTED_MODULE_3__["default"].line_wrap()) {
+      classes.push('line_wrap');
+    }
+    return classes.join(' ');
+  }
+
   attrs() {
     var attrs;
     return attrs = {
+      class: this.classes(),
       ondrop: (ev) => {
         var basename, date, epoch, ext, file, i, len, modified_asset_path, original_asset_path, ref, results;
         ev.preventDefault();

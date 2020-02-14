@@ -66,8 +66,12 @@ export default class Article
     ipc.send('drawing-window',asset)
   fullscreen:=>
     ipc.send('toggle-fullscreen')
+  toggle_line_wrap:=>
+    Data.line_wrap !Data.line_wrap()
   publisher_preview:=>
     Data.publisher_preview !Data.publisher_preview()
+  splitview:=>
+    Data.splitview !Data.splitview()
   save:=>
     Save.save()
   meta_char:=>
@@ -75,54 +79,69 @@ export default class Article
       '⌘'
     else
       'Ctrl'
+  subeditor:=>
+    m '.editor',
+      m 'span.lbl', 'Editor'
+      m 'span.btn.save', "data-tippy-content": "Save (#{@meta_char()}S)", onclick: @save,
+        m 'span.far.fa-save'
+      m 'span.btn.bold', "data-tippy-content": "Bold (#{@meta_char()}B)", onclick: @bold,
+        m 'span', 'A'
+      m 'span.btn.red', "data-tippy-content": "Red (#{@meta_char()}G)", onclick: @red,
+        m 'span', 'A'
+      #m 'span.btn.underline', onclick: @underline,
+        #m 'span', 'A'
+      m 'span.btn.highlight', "data-tippy-content": "Highlight (#{@meta_char()}D)", onclick: @highlight,
+        m 'span', 'A'
+      m 'span.btn.line-wrap', "data-tippy-content": "Toggle Line Wrap (#{@meta_char()}⇧W)", onclick: @toggle_line_wrap,
+        m 'span.fas.fa-exchange-alt'
+      m 'em'
+  subpreview:=>
+    return unless Data.splitview()
+    m '.preview',
+      m 'span.lbl', 'Preview'
+      if Data.active_asset()
+        [
+          m 'span.btn.crop', "data-tippy-content": "Crop Image", onclick: @image_crop,
+            m 'span.fas.fa-crop-alt'
+          m 'span.btn.crop', "data-tippy-content": "Resize Image", onclick: @image_resize,
+            m 'span.fas.fa-compress'
+          m 'span.btn.border', "data-tippy-content": "Border Image", onclick: @image_border,
+            m 'span.fas.fa-border-style'
+          m 'span.btn.paint', "data-tippy-content": "Edit Image", onclick: @image_paint,
+            m 'span.fas.fa-paint-brush'
+        ]
+      m 'em'
   subheader:=>
+    return if Data.publisher_preview()
     m 'section.sub',
-      m '.editor',
-        m 'span.lbl', 'Editor'
-        m 'span.btn.save', "data-tippy-content": "#{@meta_char()} + S", onclick: @save,
-          m 'span.far.fa-save'
-        m 'span.btn.bold', "data-tippy-content": "#{@meta_char()} + B", onclick: @bold,
-          m 'span', 'bold'
-        m 'span.btn.red', "data-tippy-content": "#{@meta_char()} + G", onclick: @red,
-          m 'span', 'red'
-        m 'span.btn.underline', onclick: @underline,
-          m 'span', 'underline'
-        m 'span.btn.highlight', "data-tippy-content": "#{@meta_char()} + D", onclick: @highlight,
-          m 'span', 'highlight'
-        m 'em'
-      m '.preview',
-        m 'span.lbl', 'Preview'
-        if Data.active_asset()
-          [
-            m 'span.btn.crop', "data-tippy-content": "Crop Image", onclick: @image_crop,
-              m 'span.fas.fa-crop-alt'
-            m 'span.btn.crop', "data-tippy-content": "Resize Image", onclick: @image_resize,
-              m 'span.fas.fa-compress'
-            m 'span.btn.border', "data-tippy-content": "Border Image", onclick: @image_border,
-              m 'span.fas.fa-border-style'
-            m 'span.btn.paint', "data-tippy-content": "Edit Image", onclick: @image_paint,
-              m 'span.fas.fa-paint-brush'
-          ]
+      @subeditor()
+      @subpreview()
       m 'em'
   header:=>
     m 'header',
       m 'section.main',
         m '.title', contenteditable: true,
           m.trust Data.active_file()
-        m 'span.btn.save', "data-tippy-content": "Publisher Preview (#{@meta_char()} + P)", onclick: @publisher_preview,
+        m 'span.btn.save', "data-tippy-content": "Publisher Preview (#{@meta_char()}P)", onclick: @publisher_preview,
           m 'span.far.fa-eye'
-        m 'span.btn.fullscreen', "data-tippy-content": "Fullscreen (#{@meta_char()} + F)", onclick: @fullscreen,
+        m 'span.btn.fullscreen', "data-tippy-content": "Fullscreen (#{@meta_char()}F)", onclick: @fullscreen,
           m 'span.fas.fa-window-maximize'
+        m 'span.btn.divide', "data-tippy-content": "Split view (#{@meta_char()}⇧S)", onclick: @splitview,
+          m 'span.fas.fa-columns'
         m 'em'
-      unless Data.publisher_preview()
-        @subheader()
+      @subheader()
+  classes_article:=>
+    classes = []
+    classes.push 'split' if Data.splitview()
+    classes.join(' ')
   panes:=>
     m '.panes',
       m Textarea
-      m Preview
+      if Data.splitview()
+        m Preview
       m 'em'
   view:->
-    m 'article',
+    m 'article', class: @classes_article(),
       @header()
       if Data.publisher_preview()
         m '.publisher_preview.markdown',

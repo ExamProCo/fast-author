@@ -31,6 +31,12 @@ class Data
     # whether the shift key is behind held
     @shift = stream(false)
 
+    # whether to wrap or not wrap lines in textarea
+    @line_wrap = stream(false)
+    #
+    # whether to split the view (show both editor or preview, or just editor)
+    @splitview = stream(true)
+
     # when true will hide editor and center preview.
     @publisher_preview = stream(false)
 
