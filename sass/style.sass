@@ -84,6 +84,7 @@ textarea.editor
   resize: none
   outline: none
   width: 100%
+  font-family: Menlo, Verdana
   &.line_wrap
     white-space: nowrap
 
@@ -225,12 +226,18 @@ nav
   code
     background: #d6dbe6
     border-radius: 4px
-    font-family: Verdana
+    font-family: Menlo, Verdana
     padding: 1px 4px
+    font-size: 14px
   pre code
     padding: 16px
     overflow: auto
     display: block
+  blockquote
+    margin-left: 0
+    border-left: solid 8px #ffb885
+    p
+      margin-left: 24px
 .b
   font-weight: 600
 

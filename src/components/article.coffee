@@ -7,6 +7,8 @@ import Save    from 'common/save'
 import HotkeyHeading from 'lib/hotkey_heading'
 import HotkeyWrap from 'lib/hotkey_wrap'
 import fs from 'fs'
+import Path from 'path'
+import * as fx from 'mkdir-recursive'
 import {ipcRenderer as ipc} from 'electron'
 import os from 'os'
 
@@ -57,8 +59,52 @@ export default class Article
     ctx.stroke()
     path = "/tmp/save-border.png"
     fs.writeFile path, el.toDataURL().replace(/^data:image\/png;base64,/, ""), 'base64', (err)->
-      console.log(err)
+      console.log('err',err) if err
       ipc.send('sharp-border',overlay: path, source: asset.path)
+  replace:=>
+
+  export:=>
+   el   = document.querySelector '.pane.preview.markdown'
+   html = el.outerHTML
+
+   date  = new Date().getTime()
+   epoch = Math.round(date / 1000)
+   filename  = "index.html"
+   dir = "#{Data.home()}/#{Data.active_file()}/exports/#{epoch}"
+
+   # create dir if it don't exist.
+   if !fs.existsSync(dir)
+     fx.mkdirSync dir
+   path = [dir,filename].join('/')
+
+   results = html.match(/src=".+?"/g)
+
+   replace_dirs = []
+   if results
+     for result in results
+       url = result.replace('src="','').replace(/"$/,'')
+       current_dir = Path.dirname url
+       if replace_dirs.indexOf(dir) is -1
+         replace_dirs.push current_dir
+
+       filename    = Path.basename(url)
+       destination = [dir,filename].join('/')
+
+       console.log 'copying', url, destination
+       fs.copyFile url, destination, (err) =>
+         if (err)
+           console.log('copy err', err)
+         else
+           console.log 'copied', url, destination
+
+   for redir in replace_dirs
+     re = new RegExp(redir + '/', 'g')
+     html = html.replace(re,'')
+
+   fs.writeFile path, html, (err)->
+    console.log('err',err) if err
+    console.log('exported-to:',path)
+    ipc.send('assets-reveal',path: "#{dir}/")
   image_dropshadow:=>
   image_drop:=>
   image_paint:=>
@@ -99,8 +145,12 @@ export default class Article
     return unless Data.splitview()
     m '.preview',
       m 'span.lbl', 'Preview'
+      m 'span.btn.export', "data-tippy-content": "Export Preview to HTML", onclick: @export,
+        m 'span.fas fa-file-export'
       if Data.active_asset()
         [
+          m 'span.btn.crop', "data-tippy-content": "Crop Image", onclick: @image_crop,
+            m 'span.fas.fa-crop-alt'
           m 'span.btn.crop', "data-tippy-content": "Crop Image", onclick: @image_crop,
             m 'span.fas.fa-crop-alt'
           m 'span.btn.crop', "data-tippy-content": "Resize Image", onclick: @image_resize,

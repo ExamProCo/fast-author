@@ -54,8 +54,8 @@ class Data
   # select can be loss after certain updates to textarea.
   # This ensures our old selection remains
   keep_selection:=>
-    Data.selectionStart Data._selectionStart()
-    Data.selectionEnd Data._selectionEnd()
+    @selectionStart @_selectionStart()
+    @selectionEnd @_selectionEnd()
   get_asset:=>
     asset = null
     for a in @assets()
