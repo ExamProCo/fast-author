@@ -31,26 +31,8 @@ export default class Textarea
       ondrop:(ev)=>
         ev.preventDefault()
         for file in ev.dataTransfer.files
-          date = new Date().getTime()
-          epoch = Math.round(date / 1000)
-
-          ext      = path.extname file.path
-          basename = path.basename file.path
-          modified_asset_path  = "#{Data.home()}/#{Data.active_file()}/assets/modified/#{epoch}#{ext}"
-          original_asset_path  = "#{Data.home()}/#{Data.active_file()}/assets/original/#{basename}"
-
-          # save modified
-          fs.copyFile file.path, modified_asset_path, (err) =>
-            console.log('copyFile',err) if err
-            TextInsert.at "\n![](#{modified_asset_path})"
-            m.redraw(true)
-
-          #save orginal
-          fs.copyFile file.path, original_asset_path, (err) =>
-            console.log('copyFile',err) if err
-
-          Data.keep_selection()
-          ipc.send('request-assets',project: Data.active_file())
+          Save.asset file, (asset_versions_path)=>
+            TextInsert.at "\n![](#{asset_versions_path})"
       ondragover:(ev)=>
         ev.preventDefault()
       onclick: (e)=>

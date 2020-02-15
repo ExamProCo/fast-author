@@ -1,6 +1,7 @@
 const {shell, app, BrowserWindow, ipcMain: ipc} = require('electron')
 const path = require('path')
 const fs = require('fs')
+const fx = require('mkdir-recursive')
 const homedir = require('os').homedir()
 const glob = require('glob')
 const size_of = require('image-size')
@@ -10,7 +11,9 @@ const prompt = require('electron-prompt')
 let win, win_draw
 
 function get_home_path() {
-  return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
+  let home = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
+  let new_home = [home,'fast-author'].join('/')
+  return new_home
 }
 
 function createWindow () {
@@ -57,10 +60,10 @@ app.on('activate', function () {
 
 function request_markdown_files(){
   const home   = get_home_path()
-  const folder = path.join(home,'fast-author','*')
+  const folder = path.join(home,'*')
 
   const data = {
-    home: home + '/fast-author',
+    home: home,
     files: []
   }
   glob(folder, {}, (err, files)=>{
@@ -80,35 +83,10 @@ ipc.on('request-markdown-files', function(){
 
 ipc.on('request-assets', function(e,opts){
   const home   = get_home_path()
-  const folder = path.join(home,'fast-author',opts.project,'assets','modified','*')
-  const data = {
-    files: []
-  }
-  let f;
-  glob(folder, {}, (err, files)=>{
-    for (let i = 0; i < files.length; i++) {
-      // reverse order
-      f = files[(files.length-1)-i]
-
-      let dimensions
-      try {
-        dimensions = size_of(f)
-      } catch(err) {
-        console.log('eer',err)
-        dimensions = { width: 100,height: 100 }
-      }
-      name = f.split(path.sep).pop()
-
-
-      data.files.push({
-        width: dimensions.width,
-        height: dimensions.height,
-        path: f,
-        name: name
-      }) // push
-    } // for
-    win.webContents.send('response-assets',data)
-  })
+  const manifest_path = path.join(home,opts.project,'assets-manifest.json')
+  raw_data      = fs.readFileSync(manifest_path)
+  assets_manifest = JSON.parse(raw_data)
+  win.webContents.send('response-assets',assets_manifest)
 })
 
 ipc.on('sharp-resize', function(e,opts){
@@ -197,15 +175,14 @@ ipc.on('prompt-new',function(e,opts){
   .then((name) => {
       if(name === null) {
       } else {
-        const path = get_home_path() + "/fast-author/" + name
-        fs.mkdirSync(path)
-        fs.mkdirSync(path + '/backups')
-        fs.mkdirSync(path + '/assets')
-        fs.mkdirSync(path + '/assets/original')
-        fs.mkdirSync(path + '/assets/modified')
+        new_name = name.replace(/\s/g,'-')
+        const path = [get_home_path(),new_name].join('/')
+        fx.mkdirSync(path + '/backups')
+        fx.mkdirSync(path + '/assets')
         fs.openSync(path + '/index.md', 'w')
+        fs.writeFileSync(path + '/assets-manifest.json', '[]')
         request_markdown_files()
-        win.webContents.send('response-new-project',{path: path})
+        win.webContents.send('response-new-project',{name: new_name})
       }
   })
   .catch(console.error);

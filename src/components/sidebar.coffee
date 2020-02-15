@@ -34,7 +34,8 @@ export default class Sidebar
     ipc.send('prompt-new')
   add:(file)=>
     =>
-      TextInsert.at "![](#{file.path})"
+      image_path = "#{Data.home()}/#{Data.active_file()}/assets/#{file.id}/versions/#{file.versions[file.versions.length-1].epoch}#{file.versions[file.versions.length-1].ext}"
+      TextInsert.at "![](#{image_path})"
   assets:=>
     m '.assets',
       m '.title',
@@ -43,11 +44,12 @@ export default class Sidebar
         m 'em'
       for file in Data.assets()
         m 'a.asset', href: '#', onclick: @add(file),
-          m 'span.icon.far fa-file-image'
-          m 'span', file.name
-          m '.img', style: {right: "-#{Math.min(file.width,200)}px"},
-            m 'img', src: file.path
-            m '.size', "#{file.width}x#{file.height}"
+          m 'span.n',
+            m 'span.icon.far fa-file-image'
+            m 'span', file.name
+          m '.img', style: {right: "-#{Math.min(file.versions[file.versions.length-1].width,200)}px"},
+            m 'img', src: "#{Data.home()}/#{Data.active_file()}/assets/#{file.id}/versions/#{file.versions[file.versions.length-1].epoch}#{file.versions[file.versions.length-1].ext}"
+            m '.size', "#{file.versions[file.versions.length-1].width}x#{file.versions[file.versions.length-1].height} V#{file.versions.length}"
   view:->
     [
       m '.nav_heading',
@@ -62,7 +64,8 @@ export default class Sidebar
             m 'span.far.fa-folder', "data-tippy-content": "Reveal Projects Folder", onclick: @reveal_home
             m 'em'
         for file in Data.files()
-          m 'a', href: '#', class: @classes(file), onclick: @click(file), file.name
+          m 'a', href: '#', class: @classes(file), onclick: @click(file), 
+            m 'span.n', file.name
         if Data.active_file()
           @assets()
     ]

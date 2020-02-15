@@ -151,10 +151,15 @@ nav
   padding-top: 51px
   z-index: 200
   a
+    span.n
+      white-space: nowrap
+      overflow: hidden
+      padding: 8px 16px
+      display: inline-block
+      max-width: 200px
     color: rgb(169,169,169)
     width: 100%
     font-size: 14px
-    padding: 8px 16px
     display: block
     &.active
       background: rgb(51,55,70)
@@ -179,7 +184,8 @@ nav
   .icon
     margin-right: 4px
   a.asset
-    padding: 6px 16px
+    span.n
+      padding: 6px 16px
     position: relative
     &:hover .img
       display: block

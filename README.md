@@ -26,7 +26,7 @@ asset-manifest.json
 ```
 [
   {
-    dir: '1234325', // the asset directory name
+    id: '1234325', // the asset directory name
     name:     '',   // rename of file
     original: '',   // original name of file
     verions: [

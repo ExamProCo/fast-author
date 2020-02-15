@@ -16,21 +16,12 @@ ipc.send('request-markdown-files')
 ipc.on 'response-markdown-files', (e,data)=>
   Data.home data.home
   Data.files data.files
-  if Data.active_file() 
-    ## reset asset in case where image is inserted but doesn't
-    ## have width and height.
-    #file = null
-    #for d in data.files
-      #if d.path is Data.active_file().replace('file://','')
-        #file = d
-        #break
-    #console.log('active file',file)
-    #Data.active_file file
-  else
-    Data.active_file Data.files()[0].path
+  unless Data.active_file() 
+    Data.active_file Data.files()[0].name
   m.redraw(true)
 ipc.on 'response-assets', (e,data)=>
-  Data.assets data.files
+  console.log 'respose-assets-data', data
+  Data.assets data
   m.redraw(true)
 ipc.on 'response-sharp', (e,data)=>
   console.log 'response sharp', data
@@ -40,8 +31,8 @@ ipc.on 'response-sharp', (e,data)=>
   ipc.send('request-assets',project: Data.active_file())
 
 ipc.on 'response-new-project', (e,data)=>
-  Data.active_file data.path
-  console.log data.path
+  console.log('response-new-project',data.name)
+  Data.active_file data.name
   m.redraw(true)
 
 

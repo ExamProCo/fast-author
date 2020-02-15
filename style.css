@@ -150,8 +150,13 @@ nav {
     color: darkgray;
     width: 100%;
     font-size: 14px;
-    padding: 8px 16px;
     display: block; }
+    nav a span.n {
+      white-space: nowrap;
+      overflow: hidden;
+      padding: 8px 16px;
+      display: inline-block;
+      max-width: 200px; }
     nav a.active {
       background: #333746; }
     nav a:hover {
@@ -174,8 +179,9 @@ nav {
   nav .icon {
     margin-right: 4px; }
   nav a.asset {
-    padding: 6px 16px;
     position: relative; }
+    nav a.asset span.n {
+      padding: 6px 16px; }
     nav a.asset:hover .img {
       display: block; }
     nav a.asset .img {
