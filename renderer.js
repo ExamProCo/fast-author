@@ -32899,12 +32899,13 @@ Data = class Data {
   }
 
   get_asset() {
-    var a, asset, i, len, ref;
+    var a, asset, i, len, ref, uuid;
     asset = null;
+    uuid = this.active_asset().match(/assets\/(.+)\/versions/)[1];
     ref = this.assets();
     for (i = 0, len = ref.length; i < len; i++) {
       a = ref[i];
-      if (a.path === this.active_asset().replace('file://', '')) {
+      if (a.id === uuid) {
         asset = a;
         break;
       }
@@ -33198,30 +33199,48 @@ var Article;
   image_resize() {
     console.log('send request', common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_asset());
     return electron__WEBPACK_IMPORTED_MODULE_11__["ipcRenderer"].send('sharp-resize', {
+      project: common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_file(),
       asset: common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_asset()
     });
   }
 
   image_border() {
-    var asset, ctx, el, path;
+    var a, asset, ctx, el, epoch, i, len, ref, tmp_path, version;
     asset = common_data__WEBPACK_IMPORTED_MODULE_4__["default"].get_asset();
+    epoch = parseInt(common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_asset().match(/versions\/(.+)/)[1]);
+    version = null;
+    ref = asset.versions;
+    for (i = 0, len = ref.length; i < len; i++) {
+      a = ref[i];
+      if (a.epoch === epoch) {
+        version = a;
+        break;
+      }
+    }
+    console.log('ver', version);
     el = document.getElementById('draw');
     ctx = el.getContext("2d");
-    ctx.canvas.width = asset.width;
-    ctx.canvas.height = asset.height;
+    console.log('asset', asset);
+    ctx.canvas.width = version.width;
+    ctx.canvas.height = version.height;
     ctx.beginPath();
+    ctx.lineWidth = 2;
     ctx.strokeStyle = "#000000";
     // x, y, width, height
-    ctx.rect(0, 0, asset.width, asset.height);
+    ctx.rect(0, 0, version.width, version.height);
     ctx.stroke();
-    path = "/tmp/save-border.png";
-    return fs__WEBPACK_IMPORTED_MODULE_8___default.a.writeFile(path, el.toDataURL().replace(/^data:image\/png;base64,/, ""), 'base64', function(err) {
+    tmp_path = "/tmp/save-border.png";
+    return fs__WEBPACK_IMPORTED_MODULE_8___default.a.writeFile(tmp_path, el.toDataURL().replace(/^data:image\/png;base64,/, ""), 'base64', function(err) {
+      var source;
       if (err) {
         console.log('err', err);
       }
+      source = common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_asset().replace('file://', '');
+      console.log('source', source);
       return electron__WEBPACK_IMPORTED_MODULE_11__["ipcRenderer"].send('sharp-border', {
-        overlay: path,
-        source: asset.path
+        project: common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_file(),
+        overlay: tmp_path,
+        source: source
       });
     });
   }
@@ -33345,12 +33364,6 @@ var Article;
       "data-tippy-content": "Export Preview to HTML",
       onclick: this.export
     }, mithril__WEBPACK_IMPORTED_MODULE_0__('span.fas fa-file-export')), common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_asset() ? [
-      mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.crop',
-      {
-        "data-tippy-content": "Crop Image",
-        onclick: this.image_crop
-      },
-      mithril__WEBPACK_IMPORTED_MODULE_0__('span.fas.fa-crop-alt')),
       mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.crop',
       {
         "data-tippy-content": "Crop Image",

@@ -81,50 +81,112 @@ ipc.on('request-markdown-files', function(){
   request_markdown_files()
 })
 
-ipc.on('request-assets', function(e,opts){
+function assets_manifest_path(project) {
   const home   = get_home_path()
-  const manifest_path = path.join(home,opts.project,'assets-manifest.json')
-  raw_data      = fs.readFileSync(manifest_path)
-  assets_manifest = JSON.parse(raw_data)
-  win.webContents.send('response-assets',assets_manifest)
+  const manifest_path = path.join(home,project,'assets-manifest.json')
+  return manifest_path
+}
+
+function assets_manifest_json (project){
+  const raw_data      = fs.readFileSync(assets_manifest_path(project))
+  const assets_manifest = JSON.parse(raw_data)
+  return assets_manifest
+}
+
+ipc.on('request-assets', function(e,opts){
+  win.webContents.send('response-assets',assets_manifest_json(opts.project))
 })
 
 ipc.on('sharp-resize', function(e,opts){
   console.log('sharp-resizing',opts.asset)
-  file = opts.asset.replace("file://",'')
-  date = new Date().getTime()
-  epoch = Math.round(date / 1000)
-  ext   = path.extname(opts.asset)
-  dir   = path.dirname(file)
+
+  const results = opts.asset.match(/assets\/(.+)\/versions/)
+  const uuid = results[1]
+
+  const file = opts.asset.replace("file://",'')
+  const date = new Date().getTime()
+  const epoch = Math.round(date / 1000)
+  const ext   = path.extname(opts.asset)
+  const dir   = path.dirname(file)
+
+  manifest = assets_manifest_json(opts.project)
+  let manifest_index
+  for (let i =0; i < manifest.length; i++){
+    if( manifest[i].id === uuid) {
+      manifest_index = i
+      break
+    }
+  }
+  console.log('manifest_item',manifest[manifest_index])
 
   new_asset = dir + '/' + epoch +  ext
   console.log('file',file)
   console.log('new_asset',new_asset)
 
-  sharp(file).resize({width: 726}).toFile(new_asset)
+  sharp(file).resize({width: 726}).toFile(new_asset).then(() => {
+    const dimensions = size_of(new_asset)
 
-  data = {
-    org_asset: file,
-    new_asset: new_asset
-  }
-  win.webContents.send('response-sharp',data)
-})
+    manifest[manifest_index].versions.push({
+      epoch: epoch,
+      width: dimensions.width,
+      height: dimensions.height,
+      ext: path.extname(new_asset)
+    })
+
+    const assets_manifest_string = JSON.stringify(manifest,null, 2)
+    fs.writeFileSync(assets_manifest_path(opts.project), assets_manifest_string)
+
+
+    const response_data = {
+      org_asset: file,
+      new_asset: new_asset
+    }
+    win.webContents.send('response-sharp',response_data)
+  }) // sharp
+}) // func
 
 ipc.on('sharp-border', function(e,opts){
-  console.log('sharp-border',opts.asset)
-  date = new Date().getTime()
-  epoch = Math.round(date / 1000)
-  ext   = path.extname(opts.source)
-  dir   = path.dirname(opts.source)
-  new_asset = dir + '/' + epoch +  ext
 
-  sharp(opts.source).composite([{input: opts.overlay}]).toFile(new_asset)
-  data = {
-    org_asset: opts.source,
-    new_asset: new_asset
+  const results = opts.source.match(/assets\/(.+)\/versions/)
+  const uuid = results[1]
+
+  const date = new Date().getTime()
+  const epoch = Math.round(date / 1000)
+  const ext   = path.extname(opts.source)
+  const dir   = path.dirname(opts.source)
+
+  manifest = assets_manifest_json(opts.project)
+  let manifest_index
+  for (let i =0; i < manifest.length; i++){
+    if( manifest[i].id === uuid) {
+      manifest_index = i
+      break
+    }
   }
-  win.webContents.send('response-sharp',data)
-})
+  console.log('manifest_item',manifest[manifest_index])
+
+  const new_asset = dir + '/' + epoch +  ext
+
+  sharp(opts.source).composite([{input: opts.overlay}]).toFile(new_asset).then(() => {
+    const dimensions = size_of(new_asset)
+
+    manifest[manifest_index].versions.push({
+      epoch: epoch,
+      width: dimensions.width,
+      height: dimensions.height,
+      ext: path.extname(new_asset)
+    })
+
+    const assets_manifest_string = JSON.stringify(manifest,null, 2)
+    fs.writeFileSync(assets_manifest_path(opts.project), assets_manifest_string)
+
+    const data = {
+      org_asset: opts.source,
+      new_asset: new_asset
+    }
+    win.webContents.send('response-sharp',data)
+  }) // sharp
+}) // func
 
 ipc.on('sharp-draw', function(e,opts){
   createDrawingWindow(opts)

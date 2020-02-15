@@ -45,22 +45,34 @@ export default class Article
     Data.selectionEnd   data.selectionEnd
   image_resize:=>
     console.log('send request', Data.active_asset())
-    ipc.send('sharp-resize',asset: Data.active_asset())
+    ipc.send('sharp-resize',project: Data.active_file(),asset: Data.active_asset())
   image_border:=>
     asset = Data.get_asset()
+    epoch = parseInt(Data.active_asset().match(/versions\/(.+)/)[1])
+
+    version = null
+    for a in asset.versions
+      if a.epoch is epoch
+        version = a
+        break
+    console.log('ver', version)
     el = document.getElementById('draw')
     ctx = el.getContext("2d")
-    ctx.canvas.width  = asset.width
-    ctx.canvas.height = asset.height
+    console.log 'asset', asset
+    ctx.canvas.width  = version.width
+    ctx.canvas.height = version.height
     ctx.beginPath()
+    ctx.lineWidth = 2
     ctx.strokeStyle = "#000000"
     # x, y, width, height
-    ctx.rect(0, 0, asset.width, asset.height)
+    ctx.rect(0, 0, version.width, version.height)
     ctx.stroke()
-    path = "/tmp/save-border.png"
-    fs.writeFile path, el.toDataURL().replace(/^data:image\/png;base64,/, ""), 'base64', (err)->
+    tmp_path = "/tmp/save-border.png"
+    fs.writeFile tmp_path, el.toDataURL().replace(/^data:image\/png;base64,/, ""), 'base64', (err)->
       console.log('err',err) if err
-      ipc.send('sharp-border',overlay: path, source: asset.path)
+      source = Data.active_asset().replace('file://','')
+      console.log('source',source)
+      ipc.send('sharp-border',project: Data.active_file(), overlay: tmp_path, source: source)
   replace:=>
 
   export:=>
@@ -149,8 +161,6 @@ export default class Article
         m 'span.fas fa-file-export'
       if Data.active_asset()
         [
-          m 'span.btn.crop', "data-tippy-content": "Crop Image", onclick: @image_crop,
-            m 'span.fas.fa-crop-alt'
           m 'span.btn.crop', "data-tippy-content": "Crop Image", onclick: @image_crop,
             m 'span.fas.fa-crop-alt'
           m 'span.btn.crop', "data-tippy-content": "Resize Image", onclick: @image_resize,

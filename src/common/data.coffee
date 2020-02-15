@@ -58,8 +58,9 @@ class Data
     @selectionEnd @_selectionEnd()
   get_asset:=>
     asset = null
+    uuid  = @active_asset().match(/assets\/(.+)\/versions/)[1]
     for a in @assets()
-      if a.path is @active_asset().replace('file://','')
+      if a.id is uuid
         asset = a
         break
     asset
