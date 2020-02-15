@@ -16,9 +16,10 @@ export default class Sidebar
   click:(file)=>
     =>
       Save.save ()=>
-        console.log('saving')
+        console.log 'saving-on-switch', file.name, Data.markdown_path(file.name)
         data = fs.readFileSync(Data.markdown_path(file.name))
         Data.active_file file.name
+        console.log 'new data', data.toString()
         Data.document data.toString()
         ipc.send('request-assets',project: Data.active_file())
   #add an asset where current cursor is located

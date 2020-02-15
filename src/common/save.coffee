@@ -62,6 +62,7 @@ class Save
     # save every 5 minutes
     , (1000*60)*5
   save:(callback)=>
+    console.log 'saving'
     date = new Date().getTime()
     epoch = Math.round(date / 1000)
     current_path = "#{Data.home()}/#{Data.active_file()}/index.md"

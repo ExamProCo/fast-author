@@ -32729,7 +32729,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var common_save__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! common/save */ "./src/common/save.coffee");
 /* harmony import */ var os__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! os */ "os");
 /* harmony import */ var os__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(os__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! fs */ "fs");
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_6__);
 var routes;
+
+
 
 
 
@@ -32760,6 +32764,8 @@ electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].on('response-markdown-files
   common_data__WEBPACK_IMPORTED_MODULE_3__["default"].files(data.files);
   if (!common_data__WEBPACK_IMPORTED_MODULE_3__["default"].active_file()) {
     common_data__WEBPACK_IMPORTED_MODULE_3__["default"].active_file(common_data__WEBPACK_IMPORTED_MODULE_3__["default"].files()[0].name);
+    data = fs__WEBPACK_IMPORTED_MODULE_6___default.a.readFileSync(common_data__WEBPACK_IMPORTED_MODULE_3__["default"].markdown_path(common_data__WEBPACK_IMPORTED_MODULE_3__["default"].files()[0].name));
+    common_data__WEBPACK_IMPORTED_MODULE_3__["default"].document(data.toString());
   }
   return mithril__WEBPACK_IMPORTED_MODULE_0__["redraw"](true);
 });
@@ -33035,6 +33041,7 @@ Save = class Save {
 
   save(callback) {
     var backup_dir, backup_path, current_path, date, epoch;
+    console.log('saving');
     date = new Date().getTime();
     epoch = Math.round(date / 1000);
     current_path = `${common_data__WEBPACK_IMPORTED_MODULE_0__["default"].home()}/${common_data__WEBPACK_IMPORTED_MODULE_0__["default"].active_file()}/index.md`;
@@ -33594,9 +33601,10 @@ var Sidebar;
     return () => {
       return common_save__WEBPACK_IMPORTED_MODULE_3__["default"].save(() => {
         var data;
-        console.log('saving');
+        console.log('saving-on-switch', file.name, common_data__WEBPACK_IMPORTED_MODULE_2__["default"].markdown_path(file.name));
         data = fs__WEBPACK_IMPORTED_MODULE_1___default.a.readFileSync(common_data__WEBPACK_IMPORTED_MODULE_2__["default"].markdown_path(file.name));
         common_data__WEBPACK_IMPORTED_MODULE_2__["default"].active_file(file.name);
+        console.log('new data', data.toString());
         common_data__WEBPACK_IMPORTED_MODULE_2__["default"].document(data.toString());
         return electron__WEBPACK_IMPORTED_MODULE_5__["ipcRenderer"].send('request-assets', {
           project: common_data__WEBPACK_IMPORTED_MODULE_2__["default"].active_file()

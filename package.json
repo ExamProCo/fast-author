@@ -5,6 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "npm run build_js && npm run build_electron",
+    "util_asset_ids": "node util/asset_ids.js",
     "build_electron": "electron .",
     "build_js": "webpack --mode development --config webpack.conf.js"
   },

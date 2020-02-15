@@ -4,6 +4,7 @@ import {ipcRenderer as ipc} from 'electron'
 import Data from 'common/data'
 import Save from 'common/save'
 import os from 'os'
+import fs from 'fs'
 
 routes =
   '/': ArticleView
@@ -18,6 +19,8 @@ ipc.on 'response-markdown-files', (e,data)=>
   Data.files data.files
   unless Data.active_file() 
     Data.active_file Data.files()[0].name
+    data = fs.readFileSync(Data.markdown_path(Data.files()[0].name))
+    Data.document data.toString()
   m.redraw(true)
 ipc.on 'response-assets', (e,data)=>
   console.log 'respose-assets-data', data
