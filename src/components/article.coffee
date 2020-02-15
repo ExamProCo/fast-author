@@ -47,18 +47,11 @@ export default class Article
     console.log('send request', Data.active_asset())
     ipc.send('sharp-resize',project: Data.active_file(),asset: Data.active_asset())
   image_border:=>
-    asset = Data.get_asset()
-    epoch = parseInt(Data.active_asset().match(/versions\/(.+)/)[1])
+    version = Data.get_asset_version()
 
-    version = null
-    for a in asset.versions
-      if a.epoch is epoch
-        version = a
-        break
     console.log('ver', version)
     el = document.getElementById('draw')
     ctx = el.getContext("2d")
-    console.log 'asset', asset
     ctx.canvas.width  = version.width
     ctx.canvas.height = version.height
     ctx.beginPath()
@@ -121,7 +114,12 @@ export default class Article
   image_drop:=>
   image_paint:=>
     asset = Data.get_asset()
-    ipc.send('drawing-window',asset)
+    version = Data.get_asset_version()
+    ipc.send 'drawing-window',
+      project: Data.active_file()
+      path: Data.active_asset()
+      version: version
+      asset: asset
   fullscreen:=>
     ipc.send('toggle-fullscreen')
   toggle_line_wrap:=>

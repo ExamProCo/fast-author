@@ -32,8 +32,8 @@ function createWindow () {
 function createDrawingWindow(opts){
   console.log('opts', opts)
   win_draw = new BrowserWindow({
-    width: Math.max(opts.width,800),
-    height: Math.max(opts.height + 43 + 22,300),
+    width: Math.max(opts.version.width,800),
+    height: Math.max(opts.version.height + 43 + 22,300),
     //frame: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -42,7 +42,7 @@ function createDrawingWindow(opts){
   })
   win_draw.webContents.on('did-finish-load',function(){
     console.log('finished loading')
-    win_draw.webContents.send('drawing-loaded',{asset: opts})
+    win_draw.webContents.send('drawing-loaded',opts)
   })
   win_draw.loadFile('draw.html')
 }
@@ -146,7 +146,6 @@ ipc.on('sharp-resize', function(e,opts){
 }) // func
 
 ipc.on('sharp-border', function(e,opts){
-
   const results = opts.source.match(/assets\/(.+)\/versions/)
   const uuid = results[1]
 
@@ -189,24 +188,48 @@ ipc.on('sharp-border', function(e,opts){
 }) // func
 
 ipc.on('sharp-draw', function(e,opts){
-  createDrawingWindow(opts)
+  const results = opts.source.match(/assets\/(.+)\/versions/)
+  const uuid = results[1]
 
-  console.log('drawing-border',opts)
-  date = new Date().getTime()
-  epoch = Math.round(date / 1000)
-  ext   = path.extname(opts.source)
-  dir   = path.dirname(opts.source)
-  new_asset = dir + '/' + epoch +  ext
+  const date = new Date().getTime()
+  const epoch = Math.round(date / 1000)
+  const ext   = path.extname(opts.source)
+  const dir   = path.dirname(opts.source)
 
-  sharp(opts.source).composite([{input: opts.overlay}]).toFile(new_asset)
-  data = {
-    org_asset: opts.source,
-    new_asset: new_asset
+  manifest = assets_manifest_json(opts.project)
+  let manifest_index
+  for (let i =0; i < manifest.length; i++){
+    if( manifest[i].id === uuid) {
+      manifest_index = i
+      break
+    }
   }
-  win_draw.close()
-  win_draw.destroy() // Shouldn't need this but make's it close
-  win.webContents.send('response-sharp',data)
-})
+  console.log('manifest_item',manifest[manifest_index])
+
+  const new_asset = dir + '/' + epoch +  ext
+
+  sharp(opts.source).composite([{input: opts.overlay}]).toFile(new_asset).then(() => {
+    const dimensions = size_of(new_asset)
+
+    manifest[manifest_index].versions.push({
+      epoch: epoch,
+      width: dimensions.width,
+      height: dimensions.height,
+      ext: path.extname(new_asset)
+    })
+
+    const assets_manifest_string = JSON.stringify(manifest,null, 2)
+    fs.writeFileSync(assets_manifest_path(opts.project), assets_manifest_string)
+
+    const data = {
+      org_asset: opts.source,
+      new_asset: new_asset
+    }
+    win_draw.close()
+    win_draw.destroy() // Shouldn't need this but make's it close
+    win.webContents.send('response-sharp',data)
+  }) // sharp
+}) // func
 
 ipc.on('assets-reveal', function(e,opts){
   shell.openItem(opts.path)

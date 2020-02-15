@@ -56,6 +56,14 @@ class Data
   keep_selection:=>
     @selectionStart @_selectionStart()
     @selectionEnd @_selectionEnd()
+  get_asset_version:(epoch)=>
+    epoch = parseInt(@active_asset().match(/versions\/(.+)/)[1])
+    version = null
+    for a in @get_asset().versions
+      if a.epoch is epoch
+        version = a
+        break
+    version
   get_asset:=>
     asset = null
     uuid  = @active_asset().match(/assets\/(.+)\/versions/)[1]

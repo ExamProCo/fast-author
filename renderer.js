@@ -32850,6 +32850,7 @@ Data = class Data {
     // select can be loss after certain updates to textarea.
     // This ensures our old selection remains
     this.keep_selection = this.keep_selection.bind(this);
+    this.get_asset_version = this.get_asset_version.bind(this);
     this.get_asset = this.get_asset.bind(this);
     // The root directory where all the markdown files are stored
     // eg. ~/fast-author/
@@ -32896,6 +32897,21 @@ Data = class Data {
   keep_selection() {
     this.selectionStart(this._selectionStart());
     return this.selectionEnd(this._selectionEnd());
+  }
+
+  get_asset_version(epoch) {
+    var a, i, len, ref, version;
+    epoch = parseInt(this.active_asset().match(/versions\/(.+)/)[1]);
+    version = null;
+    ref = this.get_asset().versions;
+    for (i = 0, len = ref.length; i < len; i++) {
+      a = ref[i];
+      if (a.epoch === epoch) {
+        version = a;
+        break;
+      }
+    }
+    return version;
   }
 
   get_asset() {
@@ -33205,22 +33221,11 @@ var Article;
   }
 
   image_border() {
-    var a, asset, ctx, el, epoch, i, len, ref, tmp_path, version;
-    asset = common_data__WEBPACK_IMPORTED_MODULE_4__["default"].get_asset();
-    epoch = parseInt(common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_asset().match(/versions\/(.+)/)[1]);
-    version = null;
-    ref = asset.versions;
-    for (i = 0, len = ref.length; i < len; i++) {
-      a = ref[i];
-      if (a.epoch === epoch) {
-        version = a;
-        break;
-      }
-    }
+    var ctx, el, tmp_path, version;
+    version = common_data__WEBPACK_IMPORTED_MODULE_4__["default"].get_asset_version();
     console.log('ver', version);
     el = document.getElementById('draw');
     ctx = el.getContext("2d");
-    console.log('asset', asset);
     ctx.canvas.width = version.width;
     ctx.canvas.height = version.height;
     ctx.beginPath();
@@ -33302,9 +33307,15 @@ var Article;
   image_drop() {}
 
   image_paint() {
-    var asset;
+    var asset, version;
     asset = common_data__WEBPACK_IMPORTED_MODULE_4__["default"].get_asset();
-    return electron__WEBPACK_IMPORTED_MODULE_11__["ipcRenderer"].send('drawing-window', asset);
+    version = common_data__WEBPACK_IMPORTED_MODULE_4__["default"].get_asset_version();
+    return electron__WEBPACK_IMPORTED_MODULE_11__["ipcRenderer"].send('drawing-window', {
+      project: common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_file(),
+      path: common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_asset(),
+      version: version,
+      asset: asset
+    });
   }
 
   fullscreen() {

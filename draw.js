@@ -2,18 +2,24 @@ const { ipcRenderer: ipc } = require('electron')
 const fs = require('fs')
 
 let asset = null
+let project = null
+let version = null
+let active_path = null
 let mode = null
 let mode_alt = null
 
 ipc.on('drawing-loaded', function(e,opts){
+  console.log('drawing-load:opts', opts)
   asset = opts.asset
-  const path = opts.asset.path.replace(/^/,'file://')
-  document.getElementById('source').src = path
+  version = opts.version
+  active_path = opts.path.replace('file://','')
+  project = opts.project
+  document.getElementById('source').src = active_path
 
   const el = document.getElementById('draw')
   ctx = el.getContext("2d")
-  ctx.canvas.width  = opts.asset.width
-  ctx.canvas.height = opts.asset.height
+  ctx.canvas.width  = version.width
+  ctx.canvas.height = version.height
 })
 
 
@@ -65,8 +71,8 @@ const click_canvas = function(ev){
         ctx.beginPath()
         ctx.strokeStyle = "#FF0000"
         ctx.rect(
-          rect_data.x,
-          rect_data.y,
+          rect_data.x + 0.5,
+          rect_data.y + 0.5,
           rect_data.width,
           rect_data.height
         )
@@ -85,7 +91,7 @@ function save(){
   const el = document.getElementById('draw')
   fs.writeFile(path, el.toDataURL().replace(/^data:image\/png;base64,/, ""), 'base64', function(err){
     console.log(err)
-    ipc.send('sharp-draw',{overlay: path, source: asset.path})
+    ipc.send('sharp-draw',{project: project, overlay: path, source: active_path})
   })
 }
 
