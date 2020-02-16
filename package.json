@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "js-yaml": ">=3.13.1",
     "canvas-to-image": "^2.1.1",
     "coffee-loader": "^0.9.0",
     "coffeescript": "^2.4.1",
