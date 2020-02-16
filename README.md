@@ -1,6 +1,6 @@
 # Fast Author 🚀
 
-Improve productivity when creating written articles **specific for tech tutorials involving lots screenshots**.
+Improve productivity when creating written articles **specific for tech tutorials involving lots of screenshots**.
 
 * quick editing of images and assest management
 * publisher preview
