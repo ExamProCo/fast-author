@@ -49,7 +49,7 @@ const click_canvas = function(ev){
   if (mode === 'marker') {
     let coords = ev.target.relMouseCoords(ev)
     ctx.beginPath()
-    ctx.rect(coords.x-12, coords.y-12, 24, 24)
+    ctx.rect(coords.x-12 + 0.5, coords.y-12 + 0.5, 24, 24)
     ctx.fillStyle = "#FF0000"
     ctx.fill()
     ctx.font = "14px Arial";

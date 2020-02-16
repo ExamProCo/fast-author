@@ -246,6 +246,13 @@ nav {
   .markdown blockquote p {
     margin-left: 24px; }
 
+.markdown table {
+  border-collapse: collapse;
+  margin-bottom: 16px; }
+  .markdown table th, .markdown table td {
+    border: solid 1px #c8c8c8;
+    padding: 8px; }
+
 .b {
   font-weight: 600; }
 
