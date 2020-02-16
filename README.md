@@ -1,4 +1,4 @@
-## Fast Author 🚀
+# Fast Author 🚀
 
 Improve productivity when creating written articles **specific for tech tutorials involving lots screenshots**.
 
@@ -6,6 +6,48 @@ Improve productivity when creating written articles **specific for tech tutorial
 * publisher preview
 * hotkey, hotkey, hotkey
 * optimizes your markdown files for multiple publishing platforms
+
+## Table of Contents
+* [How to Install](#How-to-Install)
+* [Cross-Platform Support](#Cross-Platform-Support)
+* [Fast Author Projects Folder](#Fast-Author-Projects-Folder)
+* [The Anatomy of a Project](#The-Anatomy-of-a-Project)
+* [Assets](#Assets)
+  * [What are assets?](#What-are-assets?)
+  * [How do you include assets?](#How-do-you-include-assets)
+  * [The original](#The-original)
+  * [The first version](#The-first-version)
+  * [Assets Manifest](#Assets-Manifest)
+    * [Manifest Items](#Manifest-Items)
+  * [Assets Manipulation](#Assets-Manipulation)
+    * [Resizing Preset](#Resizing-Preset)
+    * [Border Preset](#Border-Preset)
+    * [Cropping (WIP)](#Cropping-(WIP))
+    * [Asset Drawing Editor](#Asset-Drawing-Editor)
+* [Autosaving](#Autosaving)
+* [Hotkeys](#Hotkeys)
+  * [Global Hotkeys](#Global-Hotkeys)
+  * [Editor Hotkeys](#Editor-Hotkeys)
+* [Publisher Preview (WIP)](#Publisher-Preview-(WIP))
+* [Export (WIP)](#Export-(WIP))
+* [Development](#Development)
+  * [Core Technologies](#Core-Technologies)
+  * [Anatomy of the Source Code](#Anatomy-of-the-Source-Code)
+    * [/css and /webfonts](#/css-and-/webfonts)
+    * [/sass](#/sass)
+    * [/util](#/util)
+    * [draw.css, draw.js and draw.html](#draw.css,-draw.js-and-draw.html)
+    * [index.html, preload.js and main.js](#index.html,-preload.js-and-main.js)
+    * [package.json](#package.json)
+    * [webpack.conf.js](#webpack.conf.js)
+  * [How to run the application in development](How-to-run-the-application-in-development)
+  * [Known Gotchas with Sharp](#Known-Gotchas-with-Sharp)
+
+## How to Install
+
+We have yet to build any binaries. So you have to run the soucre code in development mode. I use the app daily in development mode so there is no downsides other than getting the app the run.
+
+To run the source code in developer mode go to: **[How to run the application in development](How-to-run-the-application-in-development)**
 
 ## Cross-Platform Support
 
@@ -51,7 +93,7 @@ So this is what a typical Fast Author project looks like:
   
 ```
 
-Lets talk about these components of hte project:
+Lets talk about these components of the project:
 
 * **index.md** - This is your active markdown file when you are using the editor
 * **/backups** - Whenever you save a backup is stored in this directory. The files are named using a epoch datetime. eg `1581798473` You could use [https://www.epochconverter.com/](https://www.epochconverter.com/) if you're curious how to translate that into a readable date.
@@ -341,8 +383,4 @@ Remember to:
 * delete `rm -rf node_modules sharp`,
 * reinstall via `npm i`
 * and package natives for electron `electron-rebuild -p -t "dev,prod,optional"`
-
-
-
-
 
