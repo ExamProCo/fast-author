@@ -7,6 +7,8 @@ Improve productivity when creating written articles **specific for tech tutorial
 * hotkey, hotkey, hotkey
 * optimizes your markdown files for multiple publishing platforms
 
+![](https://github.com/ExamProCo/fast-author/blob/master/screenshot.png)
+
 ## Table of Contents
 * [How to Install](#How-to-Install)
 * [Cross-Platform Support](#Cross-Platform-Support)
@@ -138,7 +140,7 @@ The Assets Manifest contains an array of json objects we call Manifest Items.
 
 Here is an example of a manifest file
 
-```
+```json
   {
     "id": "2a6a411a-f5ae-4518-8b3a-0841647b4e12",
     "name": "tenor",
@@ -326,7 +328,7 @@ These files are for the Assets Drawing Editor. I didn't feel like adding a names
 #### package.json
 
 Let us take a look at the scripts command:
-```
+```json
   "scripts": {
     "start": "npm run build_js && npm run build_electron",
     "util_asset_ids": "node util/asset_ids.js",
