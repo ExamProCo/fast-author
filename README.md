@@ -7,7 +7,7 @@ Improve productivity when creating written articles **specific for tech tutorial
 * hotkey, hotkey, hotkey
 * optimizes your markdown files for multiple publishing platforms
 
-![](https://github.com/ExamProCo/fast-author/blob/master/screenshot.png)
+![](https://github.com/ExamProCo/fast-author/blob/master/docs/screenshot.png)
 
 ## Table of Contents
 * [How to Install](#How-to-Install)
