@@ -11,4 +11,4 @@ accepted into the core fork you'll have to already demostrated within this proje
 
 Please **always tag your commits to the Github Issue ID** eg. `[#12] my amazing commit message`
 
-💖💖💖 Thank you reading the Contributors page!
+💖💖💖 Thank you for reading the Contributors page!
