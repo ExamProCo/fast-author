@@ -9,4 +9,6 @@ For **features** its best to dicuss what you want to implement to increase the c
 For **refactoring or conversions** of the codebase in regards to langauges, style or core technologies to get them
 accepted into the core fork you'll have to already demostrated within this project being a long-term contributor.
 
-💖💖💖 Thank you reading the Contributors page!
+Please **always tag your commits to the Github Issue ID** eg. `[#12] my amazing commit message`
+
+💖💖💖 Thank you for reading the Contributors page!
