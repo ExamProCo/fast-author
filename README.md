@@ -362,7 +362,7 @@ npm i
 
 Package to rebuild native Node.js modules against the currently installed Electron version
 ```
-electron-rebuild -p -t "dev,prod,optional"
+./node_modules/.bin/electron-rebuild -p -t "dev,prod,optional
 ```
 
 Start the application
