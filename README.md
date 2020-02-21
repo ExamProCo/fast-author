@@ -42,14 +42,14 @@ Improve productivity when creating written articles **specific for tech tutorial
     * [index.html, preload.js and main.js](#index.html,-preload.js-and-main.js)
     * [package.json](#package.json)
     * [webpack.conf.js](#webpack.conf.js)
-  * [How to run the application in development](How-to-run-the-application-in-development)
+  * [How to run the application in development](#How-to-run-the-application-in-development)
   * [Known Gotchas with Sharp](#Known-Gotchas-with-Sharp)
 
 ## How to Install
 
 We have yet to build any binaries. So you have to run the soucre code in development mode. I use the app daily in development mode so there is no downsides other than getting the app the run.
 
-To run the source code in developer mode go to: **[How to run the application in development](How-to-run-the-application-in-development)**
+To run the source code in developer mode go to: **[How to run the application in development](#How-to-run-the-application-in-development)**
 
 ## Cross-Platform Support
 
@@ -362,7 +362,7 @@ npm i
 
 Package to rebuild native Node.js modules against the currently installed Electron version
 ```
-electron-rebuild -p -t "dev,prod,optional"
+./node_modules/.bin/electron-rebuild -p -t "dev,prod,optional
 ```
 
 Start the application
