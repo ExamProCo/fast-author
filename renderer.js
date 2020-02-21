@@ -32753,7 +32753,7 @@ routes = {
 
 mithril__WEBPACK_IMPORTED_MODULE_0__["route"].prefix = '';
 
-mithril__WEBPACK_IMPORTED_MODULE_0__["route"](document.body, '/', routes);
+mithril__WEBPACK_IMPORTED_MODULE_0__["route"](document.querySelector('.container'), '/', routes);
 
 common_save__WEBPACK_IMPORTED_MODULE_4__["default"].auto();
 
@@ -32771,14 +32771,12 @@ electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].on('response-markdown-files
 });
 
 electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].on('response-assets', (e, data) => {
-  console.log('respose-assets-data', data);
   common_data__WEBPACK_IMPORTED_MODULE_3__["default"].assets(data);
   return mithril__WEBPACK_IMPORTED_MODULE_0__["redraw"](true);
 });
 
 electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].on('response-sharp', (e, data) => {
   var v;
-  console.log('response sharp', data);
   v = common_data__WEBPACK_IMPORTED_MODULE_3__["default"].document().replace(data.org_asset, data.new_asset);
   common_data__WEBPACK_IMPORTED_MODULE_3__["default"].active_asset("file://" + data.new_asset);
   common_data__WEBPACK_IMPORTED_MODULE_3__["default"].document(v);
@@ -32788,7 +32786,6 @@ electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].on('response-sharp', (e, da
 });
 
 electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].on('response-new-project', (e, data) => {
-  console.log('response-new-project', data.name);
   common_data__WEBPACK_IMPORTED_MODULE_3__["default"].active_file(data.name);
   return mithril__WEBPACK_IMPORTED_MODULE_0__["redraw"](true);
 });
@@ -33109,17 +33106,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var common_save__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! common/save */ "./src/common/save.coffee");
 /* harmony import */ var lib_hotkey_heading__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! lib/hotkey_heading */ "./src/lib/hotkey_heading.coffee");
 /* harmony import */ var lib_hotkey_wrap__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! lib/hotkey_wrap */ "./src/lib/hotkey_wrap.coffee");
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! fs */ "fs");
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! path */ "path");
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var mkdir_recursive__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! mkdir-recursive */ "./node_modules/mkdir-recursive/index.js");
-/* harmony import */ var mkdir_recursive__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(mkdir_recursive__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! electron */ "electron");
-/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(electron__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! os */ "os");
-/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(os__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! uuid/v4 */ "./node_modules/uuid/v4.js");
+/* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(uuid_v4__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! fs */ "fs");
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! path */ "path");
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var mkdir_recursive__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! mkdir-recursive */ "./node_modules/mkdir-recursive/index.js");
+/* harmony import */ var mkdir_recursive__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(mkdir_recursive__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! electron */ "electron");
+/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(electron__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! os */ "os");
+/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(os__WEBPACK_IMPORTED_MODULE_13__);
 var Article;
+
+
 
 
 
@@ -33213,36 +33214,40 @@ var Article;
   }
 
   image_resize() {
-    console.log('send request', common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_asset());
-    return electron__WEBPACK_IMPORTED_MODULE_11__["ipcRenderer"].send('sharp-resize', {
+    return electron__WEBPACK_IMPORTED_MODULE_12__["ipcRenderer"].send('sharp-resize', {
       project: common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_file(),
       asset: common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_asset()
     });
   }
 
   image_border() {
-    var ctx, el, tmp_path, version;
+    var canvas, ctx, el, new_canvas, tmp_path, version;
     version = common_data__WEBPACK_IMPORTED_MODULE_4__["default"].get_asset_version();
-    console.log('ver', version);
-    el = document.getElementById('draw');
-    ctx = el.getContext("2d");
+    console.log('version', version);
+    el = document.querySelector('#draw');
+    el.innerHTML = '';
+    new_canvas = document.createElement('canvas');
+    el.appendChild(new_canvas);
+    canvas = document.querySelector('#draw canvas');
+    ctx = canvas.getContext("2d");
     ctx.canvas.width = version.width;
     ctx.canvas.height = version.height;
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.beginPath();
     ctx.lineWidth = 2;
     ctx.strokeStyle = "#000000";
     // x, y, width, height
     ctx.rect(0, 0, version.width, version.height);
     ctx.stroke();
-    tmp_path = "/tmp/save-border.png";
-    return fs__WEBPACK_IMPORTED_MODULE_8___default.a.writeFile(tmp_path, el.toDataURL().replace(/^data:image\/png;base64,/, ""), 'base64', function(err) {
+    tmp_path = `/tmp/save-border-${uuid_v4__WEBPACK_IMPORTED_MODULE_8___default()()}.png`;
+    return fs__WEBPACK_IMPORTED_MODULE_9___default.a.writeFile(tmp_path, canvas.toDataURL().replace(/^data:image\/png;base64,/, ""), 'base64', function(err) {
       var source;
       if (err) {
         console.log('err', err);
       }
       source = common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_asset().replace('file://', '');
-      console.log('source', source);
-      return electron__WEBPACK_IMPORTED_MODULE_11__["ipcRenderer"].send('sharp-border', {
+      console.log(tmp_path, source);
+      return electron__WEBPACK_IMPORTED_MODULE_12__["ipcRenderer"].send('sharp-border', {
         project: common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_file(),
         overlay: tmp_path,
         source: source
@@ -33260,8 +33265,8 @@ var Article;
     epoch = Math.round(date / 1000);
     filename = "index.html";
     dir = `${common_data__WEBPACK_IMPORTED_MODULE_4__["default"].home()}/${common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_file()}/exports/${epoch}`;
-    if (!fs__WEBPACK_IMPORTED_MODULE_8___default.a.existsSync(dir)) {
-      mkdir_recursive__WEBPACK_IMPORTED_MODULE_10__["mkdirSync"](dir);
+    if (!fs__WEBPACK_IMPORTED_MODULE_9___default.a.existsSync(dir)) {
+      mkdir_recursive__WEBPACK_IMPORTED_MODULE_11__["mkdirSync"](dir);
     }
     path = [dir, filename].join('/');
     results = html.match(/src=".+?"/g);
@@ -33270,14 +33275,14 @@ var Article;
       for (i = 0, len = results.length; i < len; i++) {
         result = results[i];
         url = result.replace('src="', '').replace(/"$/, '');
-        current_dir = path__WEBPACK_IMPORTED_MODULE_9___default.a.dirname(url);
+        current_dir = path__WEBPACK_IMPORTED_MODULE_10___default.a.dirname(url);
         if (replace_dirs.indexOf(dir) === -1) {
           replace_dirs.push(current_dir);
         }
-        filename = path__WEBPACK_IMPORTED_MODULE_9___default.a.basename(url);
+        filename = path__WEBPACK_IMPORTED_MODULE_10___default.a.basename(url);
         destination = [dir, filename].join('/');
         console.log('copying', url, destination);
-        fs__WEBPACK_IMPORTED_MODULE_8___default.a.copyFile(url, destination, (err) => {
+        fs__WEBPACK_IMPORTED_MODULE_9___default.a.copyFile(url, destination, (err) => {
           if (err) {
             return console.log('copy err', err);
           } else {
@@ -33291,12 +33296,12 @@ var Article;
       re = new RegExp(redir + '/', 'g');
       html = html.replace(re, '');
     }
-    return fs__WEBPACK_IMPORTED_MODULE_8___default.a.writeFile(path, html, function(err) {
+    return fs__WEBPACK_IMPORTED_MODULE_9___default.a.writeFile(path, html, function(err) {
       if (err) {
         console.log('err', err);
       }
       console.log('exported-to:', path);
-      return electron__WEBPACK_IMPORTED_MODULE_11__["ipcRenderer"].send('assets-reveal', {
+      return electron__WEBPACK_IMPORTED_MODULE_12__["ipcRenderer"].send('assets-reveal', {
         path: `${dir}/`
       });
     });
@@ -33310,7 +33315,7 @@ var Article;
     var asset, version;
     asset = common_data__WEBPACK_IMPORTED_MODULE_4__["default"].get_asset();
     version = common_data__WEBPACK_IMPORTED_MODULE_4__["default"].get_asset_version();
-    return electron__WEBPACK_IMPORTED_MODULE_11__["ipcRenderer"].send('drawing-window', {
+    return electron__WEBPACK_IMPORTED_MODULE_12__["ipcRenderer"].send('drawing-window', {
       project: common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_file(),
       path: common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_asset(),
       version: version,
@@ -33319,7 +33324,7 @@ var Article;
   }
 
   fullscreen() {
-    return electron__WEBPACK_IMPORTED_MODULE_11__["ipcRenderer"].send('toggle-fullscreen');
+    return electron__WEBPACK_IMPORTED_MODULE_12__["ipcRenderer"].send('toggle-fullscreen');
   }
 
   toggle_line_wrap() {
@@ -33339,7 +33344,7 @@ var Article;
   }
 
   meta_char() {
-    if (os__WEBPACK_IMPORTED_MODULE_12___default.a.platform() === 'darwin') {
+    if (os__WEBPACK_IMPORTED_MODULE_13___default.a.platform() === 'darwin') {
       return '⌘';
     } else {
       return 'Ctrl';
@@ -34205,7 +34210,7 @@ var ArticleView;
   view() {
     return mithril__WEBPACK_IMPORTED_MODULE_0__('main', {
       class: this.classes()
-    }, mithril__WEBPACK_IMPORTED_MODULE_0__('canvas#draw'), !common_data__WEBPACK_IMPORTED_MODULE_4__["default"].publisher_preview() ? mithril__WEBPACK_IMPORTED_MODULE_0__(components_sidebar__WEBPACK_IMPORTED_MODULE_1__["default"]) : void 0, common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_file() ? [mithril__WEBPACK_IMPORTED_MODULE_0__(components_article__WEBPACK_IMPORTED_MODULE_2__["default"]), !common_data__WEBPACK_IMPORTED_MODULE_4__["default"].publisher_preview() ? mithril__WEBPACK_IMPORTED_MODULE_0__(components_infobar__WEBPACK_IMPORTED_MODULE_3__["default"]) : void 0] : void 0);
+    }, !common_data__WEBPACK_IMPORTED_MODULE_4__["default"].publisher_preview() ? mithril__WEBPACK_IMPORTED_MODULE_0__(components_sidebar__WEBPACK_IMPORTED_MODULE_1__["default"]) : void 0, common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_file() ? [mithril__WEBPACK_IMPORTED_MODULE_0__(components_article__WEBPACK_IMPORTED_MODULE_2__["default"]), !common_data__WEBPACK_IMPORTED_MODULE_4__["default"].publisher_preview() ? mithril__WEBPACK_IMPORTED_MODULE_0__(components_infobar__WEBPACK_IMPORTED_MODULE_3__["default"]) : void 0] : void 0);
   }
 
 });

@@ -6,6 +6,7 @@ import Data    from 'common/data'
 import Save    from 'common/save'
 import HotkeyHeading from 'lib/hotkey_heading'
 import HotkeyWrap from 'lib/hotkey_wrap'
+import uuidv4 from 'uuid/v4'
 import fs from 'fs'
 import Path from 'path'
 import * as fx from 'mkdir-recursive'
@@ -44,27 +45,33 @@ export default class Article
     Data.selectionStart data.selectionStart
     Data.selectionEnd   data.selectionEnd
   image_resize:=>
-    console.log('send request', Data.active_asset())
     ipc.send('sharp-resize',project: Data.active_file(),asset: Data.active_asset())
   image_border:=>
     version = Data.get_asset_version()
+    console.log('version',version)
+    el = document.querySelector('#draw')
+    el.innerHTML = ''
 
-    console.log('ver', version)
-    el = document.getElementById('draw')
-    ctx = el.getContext("2d")
+    new_canvas = document.createElement('canvas')
+    el.appendChild new_canvas
+
+    canvas = document.querySelector('#draw canvas')
+
+    ctx = canvas.getContext("2d")
     ctx.canvas.width  = version.width
     ctx.canvas.height = version.height
+    ctx.clearRect 0, 0, ctx.canvas.width, ctx.canvas.height
     ctx.beginPath()
     ctx.lineWidth = 2
     ctx.strokeStyle = "#000000"
     # x, y, width, height
     ctx.rect(0, 0, version.width, version.height)
     ctx.stroke()
-    tmp_path = "/tmp/save-border.png"
-    fs.writeFile tmp_path, el.toDataURL().replace(/^data:image\/png;base64,/, ""), 'base64', (err)->
+    tmp_path = "/tmp/save-border-#{uuidv4()}.png"
+    fs.writeFile tmp_path, canvas.toDataURL().replace(/^data:image\/png;base64,/, ""), 'base64', (err)->
       console.log('err',err) if err
       source = Data.active_asset().replace('file://','')
-      console.log('source',source)
+      console.log(tmp_path,source)
       ipc.send('sharp-border',project: Data.active_file(), overlay: tmp_path, source: source)
   replace:=>
 

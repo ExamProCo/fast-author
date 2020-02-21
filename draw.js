@@ -1,5 +1,6 @@
 const { ipcRenderer: ipc } = require('electron')
 const fs = require('fs')
+const uuidv4 = require('uuid/v4')
 
 let asset = null
 let project = null
@@ -20,6 +21,7 @@ ipc.on('drawing-loaded', function(e,opts){
   ctx = el.getContext("2d")
   ctx.canvas.width  = version.width
   ctx.canvas.height = version.height
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
 })
 
 
@@ -53,6 +55,7 @@ const click_canvas = function(ev){
     ctx.fillStyle = "#FF0000"
     ctx.fill()
     ctx.font = "14px Arial";
+    ctx.lineWidth = 1
     ctx.fillStyle = "#FFFFFF"
     ctx.strokeStyle = "#FFFFFF"
     ctx.strokeText(mode_alt, coords.x-4, coords.y+4);
@@ -69,6 +72,7 @@ const click_canvas = function(ev){
         rect_data.height = coords.y - rect_data.y
         ctx = ev.target.getContext("2d")
         ctx.beginPath()
+        ctx.lineWidth = 3
         ctx.strokeStyle = "#FF0000"
         ctx.rect(
           rect_data.x + 0.5,
@@ -87,7 +91,7 @@ const click_canvas = function(ev){
 
 function save(){
   console.log('saving')
-  let path = "/tmp/save-drawing-overlay.png"
+  let path = `/tmp/drawing-overlay-${uuidv4()}.png`
   const el = document.getElementById('draw')
   fs.writeFile(path, el.toDataURL().replace(/^data:image\/png;base64,/, ""), 'base64', function(err){
     console.log(err)

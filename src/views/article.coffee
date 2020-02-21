@@ -17,7 +17,6 @@ export default class ArticleView
       ''
   view:->
     m 'main', class: @classes(),
-      m 'canvas#draw'
       unless Data.publisher_preview()
         m Sidebar
       if Data.active_file()

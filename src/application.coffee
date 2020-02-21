@@ -9,7 +9,8 @@ import fs from 'fs'
 routes =
   '/': ArticleView
 m.route.prefix = ''
-m.route document.body, '/', routes
+
+m.route document.querySelector('.container'), '/', routes
 
 Save.auto()
 
@@ -23,18 +24,15 @@ ipc.on 'response-markdown-files', (e,data)=>
     Data.document data.toString()
   m.redraw(true)
 ipc.on 'response-assets', (e,data)=>
-  console.log 'respose-assets-data', data
   Data.assets data
   m.redraw(true)
 ipc.on 'response-sharp', (e,data)=>
-  console.log 'response sharp', data
   v = Data.document().replace(data.org_asset,data.new_asset)
   Data.active_asset("file://"+data.new_asset)
   Data.document v
   ipc.send('request-assets',project: Data.active_file())
 
 ipc.on 'response-new-project', (e,data)=>
-  console.log('response-new-project',data.name)
   Data.active_file data.name
   m.redraw(true)
 

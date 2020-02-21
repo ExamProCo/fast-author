@@ -71,6 +71,10 @@ article {
     article.split section.sub div:first-child {
       border-right: solid 1px #c8c8c8; }
 
+.container {
+  height: 100%;
+  width: 100%; }
+
 .panes {
   height: 100%; }
 
