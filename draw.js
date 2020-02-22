@@ -34,9 +34,12 @@ const rect_data = {
   height: null
 }
 
-const rect = function(ev){
-  ev.target.classList.add('selected')
-  mode = 'rect'
+const rect = function(model_alt){
+  return function(ev){
+    ev.target.classList.add('selected')
+    mode = 'rect'
+    mode_alt = model_alt
+  }
 }
 
 const marker = function(val){
@@ -73,13 +76,21 @@ const click_canvas = function(ev){
         ctx = ev.target.getContext("2d")
         ctx.beginPath()
         ctx.lineWidth = 3
-        ctx.strokeStyle = "#FF0000"
+        if (mode_alt === 'black'){
+          ctx.strokeStyle = "#000000"
+          ctx.fillStyle = "#000000"
+        } else if (mode_alt === 'red') {
+          ctx.strokeStyle = "#FF0000"
+        }
         ctx.rect(
           rect_data.x + 0.5,
           rect_data.y + 0.5,
           rect_data.width,
           rect_data.height
         )
+        if (mode_alt === 'black'){
+          ctx.fill()
+        }
         ctx.stroke()
         rect_data.state = 0
         document.querySelector('.btn.rec').classList.remove('selected')
@@ -121,7 +132,8 @@ HTMLCanvasElement.prototype.relMouseCoords = relMouseCoords
 
 document.querySelector('canvas').addEventListener('click',click_canvas)
 
-document.querySelector('.btn.rec').addEventListener('click',rect)
+document.querySelector('.btn.rec.red').addEventListener('click',rect('red'))
+document.querySelector('.btn.rec.black').addEventListener('click',rect('black'))
 document.querySelector('.btn.mk1').addEventListener('click',marker(1))
 document.querySelector('.btn.mk2').addEventListener('click',marker(2))
 document.querySelector('.btn.mk3').addEventListener('click',marker(3))
