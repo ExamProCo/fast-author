@@ -32776,8 +32776,12 @@ electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].on('response-assets', (e, d
 });
 
 electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].on('response-sharp', (e, data) => {
-  var v;
-  v = common_data__WEBPACK_IMPORTED_MODULE_3__["default"].document().replace(data.org_asset, data.new_asset);
+  var new_asset_path, org_asset_path, v;
+  org_asset_path = data.org_asset.replace(/^.*assets/, '~');
+  new_asset_path = data.new_asset.replace(/^.*assets/, '~');
+  console.log(new_asset_path);
+  console.log(org_asset_path);
+  v = common_data__WEBPACK_IMPORTED_MODULE_3__["default"].document().replace(org_asset_path, new_asset_path);
   common_data__WEBPACK_IMPORTED_MODULE_3__["default"].active_asset("file://" + data.new_asset);
   common_data__WEBPACK_IMPORTED_MODULE_3__["default"].document(v);
   return electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].send('request-assets', {
@@ -32891,7 +32895,6 @@ Data = class Data {
   markdown_path(name) {
     var path;
     path = `${this.home()}/${name}/index.md`;
-    console.log(path);
     return path;
   }
 
@@ -32918,9 +32921,7 @@ Data = class Data {
   render() {
     var markdown;
     markdown = this.document();
-    console.log('markdown-1', markdown);
     markdown = markdown.replace(/~/g, [this.home(), this.active_file(), 'assets'].join('/'));
-    console.log('markdown-2', markdown);
     return markdown;
   }
 
@@ -33236,7 +33237,6 @@ var Article;
   image_border() {
     var canvas, ctx, el, new_canvas, tmp_path, version;
     version = common_data__WEBPACK_IMPORTED_MODULE_4__["default"].get_asset_version();
-    console.log('version', version);
     el = document.querySelector('#draw');
     el.innerHTML = '';
     new_canvas = document.createElement('canvas');
@@ -33259,7 +33259,6 @@ var Article;
         console.log('err', err);
       }
       source = common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_asset().replace('file://', '');
-      console.log(tmp_path, source);
       return electron__WEBPACK_IMPORTED_MODULE_12__["ipcRenderer"].send('sharp-border', {
         project: common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_file(),
         overlay: tmp_path,
@@ -33294,7 +33293,6 @@ var Article;
         }
         filename = path__WEBPACK_IMPORTED_MODULE_10___default.a.basename(url);
         destination = [dir, filename].join('/');
-        console.log('copying', url, destination);
         fs__WEBPACK_IMPORTED_MODULE_9___default.a.copyFile(url, destination, (err) => {
           if (err) {
             return console.log('copy err', err);
@@ -33313,7 +33311,6 @@ var Article;
       if (err) {
         console.log('err', err);
       }
-      console.log('exported-to:', path);
       return electron__WEBPACK_IMPORTED_MODULE_12__["ipcRenderer"].send('assets-reveal', {
         path: `${dir}/`
       });

@@ -49,7 +49,6 @@ class Data
     @_selectionEnd   = stream 0
   markdown_path:(name)=>
     path = "#{@home()}/#{name}/index.md"
-    console.log path
     path
   # select can be loss after certain updates to textarea.
   # This ensures our old selection remains
@@ -66,9 +65,7 @@ class Data
     version
   render:=>
     markdown = @document()
-    console.log 'markdown-1', markdown
     markdown = markdown.replace /~/g, [@home(),@active_file(),'assets'].join('/')
-    console.log 'markdown-2', markdown
     markdown
   get_asset:=>
     asset = null

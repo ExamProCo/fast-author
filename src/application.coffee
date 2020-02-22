@@ -27,7 +27,12 @@ ipc.on 'response-assets', (e,data)=>
   Data.assets data
   m.redraw(true)
 ipc.on 'response-sharp', (e,data)=>
-  v = Data.document().replace(data.org_asset,data.new_asset)
+  org_asset_path = data.org_asset.replace(/^.*assets/,'~')
+  new_asset_path = data.new_asset.replace(/^.*assets/,'~')
+  console.log new_asset_path
+  console.log org_asset_path
+
+  v = Data.document().replace(org_asset_path,new_asset_path)
   Data.active_asset("file://"+data.new_asset)
   Data.document v
   ipc.send('request-assets',project: Data.active_file())

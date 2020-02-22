@@ -48,7 +48,6 @@ export default class Article
     ipc.send('sharp-resize',project: Data.active_file(),asset: Data.active_asset())
   image_border:=>
     version = Data.get_asset_version()
-    console.log('version',version)
     el = document.querySelector('#draw')
     el.innerHTML = ''
 
@@ -71,7 +70,6 @@ export default class Article
     fs.writeFile tmp_path, canvas.toDataURL().replace(/^data:image\/png;base64,/, ""), 'base64', (err)->
       console.log('err',err) if err
       source = Data.active_asset().replace('file://','')
-      console.log(tmp_path,source)
       ipc.send('sharp-border',project: Data.active_file(), overlay: tmp_path, source: source)
   replace:=>
 
@@ -102,7 +100,6 @@ export default class Article
        filename    = Path.basename(url)
        destination = [dir,filename].join('/')
 
-       console.log 'copying', url, destination
        fs.copyFile url, destination, (err) =>
          if (err)
            console.log('copy err', err)
@@ -115,7 +112,6 @@ export default class Article
 
    fs.writeFile path, html, (err)->
     console.log('err',err) if err
-    console.log('exported-to:',path)
     ipc.send('assets-reveal',path: "#{dir}/")
   image_dropshadow:=>
   image_drop:=>
