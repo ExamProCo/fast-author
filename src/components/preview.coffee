@@ -35,4 +35,4 @@ export default class Preview
       el.addEventListener("click", @select_image)
   view:=>
     m '.pane.preview.markdown',
-      m.trust(@md.render(Data.document()))
+      m.trust(@md.render(Data.render()))

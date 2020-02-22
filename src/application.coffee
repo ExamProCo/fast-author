@@ -33,6 +33,9 @@ ipc.on 'response-sharp', (e,data)=>
   ipc.send('request-assets',project: Data.active_file())
 
 ipc.on 'response-new-project', (e,data)=>
+  Data.document ''
+  Data.active_asset null
+  Data.last_saved ''
   Data.active_file data.name
   m.redraw(true)
 

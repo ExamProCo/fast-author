@@ -129,6 +129,20 @@ The first version of an asset is identitcal to the original with the exception t
 
 In the markdown editor we never refernce the original image, and this is why we create an immediate copy of the original.
 
+### Assets Shorthand
+
+The tilde character `~` is a shorthand to the full path of the asset directory so this:
+
+```
+/Users/andrew/fast-author/ECS-Project/assets/f60fa70d-03b7-4970-ad24-d56586143204/versions/1582321723.png
+```
+
+will become this:
+
+```
+![](~/f60fa70d-03b7-4970-ad24-d56586143204/versions/1582321723.png)
+```
+
 ### Assets Manifest
 
 The Assets Manifest is located at the root of a asset folder and is named `assets-manifet.json`

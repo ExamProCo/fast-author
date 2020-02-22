@@ -32786,6 +32786,9 @@ electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].on('response-sharp', (e, da
 });
 
 electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].on('response-new-project', (e, data) => {
+  common_data__WEBPACK_IMPORTED_MODULE_3__["default"].document('');
+  common_data__WEBPACK_IMPORTED_MODULE_3__["default"].active_asset(null);
+  common_data__WEBPACK_IMPORTED_MODULE_3__["default"].last_saved('');
   common_data__WEBPACK_IMPORTED_MODULE_3__["default"].active_file(data.name);
   return mithril__WEBPACK_IMPORTED_MODULE_0__["redraw"](true);
 });
@@ -32848,6 +32851,7 @@ Data = class Data {
     // This ensures our old selection remains
     this.keep_selection = this.keep_selection.bind(this);
     this.get_asset_version = this.get_asset_version.bind(this);
+    this.render = this.render.bind(this);
     this.get_asset = this.get_asset.bind(this);
     // The root directory where all the markdown files are stored
     // eg. ~/fast-author/
@@ -32909,6 +32913,15 @@ Data = class Data {
       }
     }
     return version;
+  }
+
+  render() {
+    var markdown;
+    markdown = this.document();
+    console.log('markdown-1', markdown);
+    markdown = markdown.replace(/~/g, [this.home(), this.active_file(), 'assets'].join('/'));
+    console.log('markdown-2', markdown);
+    return markdown;
   }
 
   get_asset() {
@@ -33445,7 +33458,7 @@ var Article;
   view() {
     return mithril__WEBPACK_IMPORTED_MODULE_0__('article', {
       class: this.classes_article()
-    }, this.header(), common_data__WEBPACK_IMPORTED_MODULE_4__["default"].publisher_preview() ? mithril__WEBPACK_IMPORTED_MODULE_0__('.publisher_preview.markdown', mithril__WEBPACK_IMPORTED_MODULE_0__["trust"](this.md.render(common_data__WEBPACK_IMPORTED_MODULE_4__["default"].document()))) : this.panes());
+    }, this.header(), common_data__WEBPACK_IMPORTED_MODULE_4__["default"].publisher_preview() ? mithril__WEBPACK_IMPORTED_MODULE_0__('.publisher_preview.markdown', mithril__WEBPACK_IMPORTED_MODULE_0__["trust"](this.md.render(common_data__WEBPACK_IMPORTED_MODULE_4__["default"].render()))) : this.panes());
   }
 
 });
@@ -33561,7 +33574,7 @@ var Preview;
   }
 
   view() {
-    return mithril__WEBPACK_IMPORTED_MODULE_0__('.pane.preview.markdown', mithril__WEBPACK_IMPORTED_MODULE_0__["trust"](this.md.render(common_data__WEBPACK_IMPORTED_MODULE_2__["default"].document())));
+    return mithril__WEBPACK_IMPORTED_MODULE_0__('.pane.preview.markdown', mithril__WEBPACK_IMPORTED_MODULE_0__["trust"](this.md.render(common_data__WEBPACK_IMPORTED_MODULE_2__["default"].render())));
   }
 
 });
@@ -33670,8 +33683,8 @@ var Sidebar;
   add(file) {
     return () => {
       var image_path;
-      image_path = `${common_data__WEBPACK_IMPORTED_MODULE_2__["default"].home()}/${common_data__WEBPACK_IMPORTED_MODULE_2__["default"].active_file()}/assets/${file.id}/versions/${file.versions[file.versions.length - 1].epoch}${file.versions[file.versions.length - 1].ext}`;
-      return lib_text_insert__WEBPACK_IMPORTED_MODULE_4__["default"].at(`![](${image_path})`);
+      image_path = `~/${file.id}/versions/${file.versions[file.versions.length - 1].epoch}${file.versions[file.versions.length - 1].ext}`;
+      return lib_text_insert__WEBPACK_IMPORTED_MODULE_4__["default"].at(`\n![](${image_path})`);
     };
   }
 
@@ -33845,7 +33858,9 @@ var Textarea;
         for (i = 0, len = ref.length; i < len; i++) {
           file = ref[i];
           results.push(common_save__WEBPACK_IMPORTED_MODULE_4__["default"].asset(file, (asset_versions_path) => {
-            return lib_text_insert__WEBPACK_IMPORTED_MODULE_5__["default"].at(`\n![](${asset_versions_path})`);
+            var asset_path;
+            asset_path = asset_versions_path.replace(/^.*assets/, '~');
+            return lib_text_insert__WEBPACK_IMPORTED_MODULE_5__["default"].at(`\n![](${asset_path})`);
           }));
         }
         return results;

@@ -32,7 +32,8 @@ export default class Textarea
         ev.preventDefault()
         for file in ev.dataTransfer.files
           Save.asset file, (asset_versions_path)=>
-            TextInsert.at "\n![](#{asset_versions_path})"
+            asset_path = asset_versions_path.replace(/^.*assets/,'~')
+            TextInsert.at "\n![](#{asset_path})"
       ondragover:(ev)=>
         ev.preventDefault()
       onclick: (e)=>

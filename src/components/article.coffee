@@ -210,6 +210,6 @@ export default class Article
       @header()
       if Data.publisher_preview()
         m '.publisher_preview.markdown',
-          m.trust(@md.render(Data.document()))
+          m.trust @md.render(Data.render())
       else
         @panes()

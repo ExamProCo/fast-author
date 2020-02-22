@@ -64,6 +64,12 @@ class Data
         version = a
         break
     version
+  render:=>
+    markdown = @document()
+    console.log 'markdown-1', markdown
+    markdown = markdown.replace /~/g, [@home(),@active_file(),'assets'].join('/')
+    console.log 'markdown-2', markdown
+    markdown
   get_asset:=>
     asset = null
     uuid  = @active_asset().match(/assets\/(.+)\/versions/)[1]
