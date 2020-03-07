@@ -32921,7 +32921,7 @@ Data = class Data {
   render() {
     var markdown;
     markdown = this.document();
-    markdown = markdown.replace(/~/g, [this.home(), this.active_file(), 'assets'].join('/'));
+    markdown = markdown.replace(/~&/g, [this.home(), this.active_file(), 'assets'].join('/'));
     return markdown;
   }
 
@@ -33680,7 +33680,7 @@ var Sidebar;
   add(file) {
     return () => {
       var image_path;
-      image_path = `~/${file.id}/versions/${file.versions[file.versions.length - 1].epoch}${file.versions[file.versions.length - 1].ext}`;
+      image_path = `~&/${file.id}/versions/${file.versions[file.versions.length - 1].epoch}${file.versions[file.versions.length - 1].ext}`;
       return lib_text_insert__WEBPACK_IMPORTED_MODULE_4__["default"].at(`\n![](${image_path})`);
     };
   }
@@ -33856,7 +33856,7 @@ var Textarea;
           file = ref[i];
           results.push(common_save__WEBPACK_IMPORTED_MODULE_4__["default"].asset(file, (asset_versions_path) => {
             var asset_path;
-            asset_path = asset_versions_path.replace(/^.*assets/, '~');
+            asset_path = asset_versions_path.replace(/^.*assets/, '~&');
             return lib_text_insert__WEBPACK_IMPORTED_MODULE_5__["default"].at(`\n![](${asset_path})`);
           }));
         }

@@ -35,7 +35,7 @@ export default class Sidebar
     ipc.send('prompt-new')
   add:(file)=>
     =>
-      image_path = "~/#{file.id}/versions/#{file.versions[file.versions.length-1].epoch}#{file.versions[file.versions.length-1].ext}"
+      image_path = "~&/#{file.id}/versions/#{file.versions[file.versions.length-1].epoch}#{file.versions[file.versions.length-1].ext}"
       TextInsert.at "\n![](#{image_path})"
   assets:=>
     m '.assets',

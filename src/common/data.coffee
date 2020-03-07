@@ -65,7 +65,7 @@ class Data
     version
   render:=>
     markdown = @document()
-    markdown = markdown.replace /~/g, [@home(),@active_file(),'assets'].join('/')
+    markdown = markdown.replace /~&/g, [@home(),@active_file(),'assets'].join('/')
     markdown
   get_asset:=>
     asset = null
