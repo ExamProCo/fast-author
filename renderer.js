@@ -32922,6 +32922,7 @@ Data = class Data {
     var markdown;
     markdown = this.document();
     markdown = markdown.replace(/~&/g, [this.home(), this.active_file(), 'assets'].join('/'));
+    markdown = markdown.replace(/\[\s\]/g, "<input type='checkbox' />");
     return markdown;
   }
 
@@ -33270,9 +33271,9 @@ var Article;
   replace() {}
 
   export() {
-    var current_dir, date, destination, dir, el, epoch, filename, html, i, j, len, len1, path, re, redir, replace_dirs, result, results, url;
+    var css, css_path, current_dir, date, destination, dir, el, epoch, filename, html, html_body, html_end, html_start, i, j, len, len1, path, re, redir, replace_dirs, result, results, url;
     el = document.querySelector('.pane.preview.markdown');
-    html = el.outerHTML;
+    html_body = el.outerHTML;
     date = new Date().getTime();
     epoch = Math.round(date / 1000);
     filename = "index.html";
@@ -33281,7 +33282,8 @@ var Article;
       mkdir_recursive__WEBPACK_IMPORTED_MODULE_11__["mkdirSync"](dir);
     }
     path = [dir, filename].join('/');
-    results = html.match(/src=".+?"/g);
+    css_path = [dir, 'style.css'].join('/');
+    results = html_body.match(/src=".+?"/g);
     replace_dirs = [];
     if (results) {
       for (i = 0, len = results.length; i < len; i++) {
@@ -33305,14 +33307,92 @@ var Article;
     for (j = 0, len1 = replace_dirs.length; j < len1; j++) {
       redir = replace_dirs[j];
       re = new RegExp(redir + '/', 'g');
-      html = html.replace(re, '');
+      html_body = html_body.replace(re, '');
     }
+    html_start = `<html>
+  <head>
+    <title>
+      ${common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_file()}
+    </title>
+    <link type="text/css" rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <main>`;
+    html_end = `  </main>
+</body>
+</html>`;
+    html = html_start + html_body + html_end;
+    css = `* { box-sizing: border-box; }
+html, body { 
+  background: rgb(240,240,240);
+  padding: 0;
+  margin: 0;
+  font-family: arial;
+}
+main {
+  width: 880px;
+  border-radius: 4px;
+  border: solid 1px rgb(210,210,210);
+  background: #fff;
+  padding: 24px 77px;
+  margin: 0px auto;
+  margin-top: 24px;
+  box-shadow: 1px 1px 0px #c2c2c2;
+}
+.markdown h1, h2, h3, h4, h5, h6 {
+  margin: 0px;
+  margin-bottom: 12px;
+}
+.markdown h1 { font-size: 32px }
+.markdown h2 { font-size: 24px }
+.markdown h3 { font-size: 20px }
+.markdown h4 { font-size: 16px }
+.markdown p  { margin-top: 0px }
+.mardown img {
+  margin: 0;
+  display: block;
+  border: solid 1px rgb(255,255,255)
+}
+.markdown code {
+  background: #d6dbe6;
+  border-radius: 4px;
+  font-family: Menlo, Verdana;
+  padding: 1px 4px;
+  font-size: 14px;
+}
+.markdown pre code {
+  padding: 16px;
+  overflow: auto;
+  display: block;
+}
+.markdown blockquote {
+  margin-left: 0;
+  border-left: solid 8px #ffb885;
+}
+.markdown blockquote p {
+  margin-left: 24px;
+}
+.markdown table {
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+.markdown table th,
+.markdown table td {
+  border: solid 1px rgb(200,200,200);
+  padding: 8px;
+}`;
     return fs__WEBPACK_IMPORTED_MODULE_9___default.a.writeFile(path, html, function(err) {
       if (err) {
         console.log('err', err);
       }
-      return electron__WEBPACK_IMPORTED_MODULE_12__["ipcRenderer"].send('assets-reveal', {
-        path: `${dir}/`
+      return fs__WEBPACK_IMPORTED_MODULE_9___default.a.writeFile(css_path, css, function(err) {
+        `${common_data__WEBPACK_IMPORTED_MODULE_4__["default"].home()}/${common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_file()}/style.css`;
+        if (err) {
+          console.log('err', err);
+        }
+        return electron__WEBPACK_IMPORTED_MODULE_12__["ipcRenderer"].send('assets-reveal', {
+          path: `${dir}/`
+        });
       });
     });
   }

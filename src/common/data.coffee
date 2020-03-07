@@ -66,6 +66,7 @@ class Data
   render:=>
     markdown = @document()
     markdown = markdown.replace /~&/g, [@home(),@active_file(),'assets'].join('/')
+    markdown = markdown.replace /\[\s\]/g, "<input type='checkbox' />"
     markdown
   get_asset:=>
     asset = null
