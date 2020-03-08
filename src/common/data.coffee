@@ -65,9 +65,11 @@ class Data
     version
   render:=>
     markdown = @document()
-    markdown = markdown.replace /~&/g, [@home(),@active_file(),'assets'].join('/')
+    markdown = @expand_paths(markdown)
     markdown = markdown.replace /\[\s\]/g, "<input type='checkbox' />"
     markdown
+  expand_paths:(markdown)=>
+    markdown.replace /~&/g, [@home(),@active_file(),'assets'].join('/')
   get_asset:=>
     asset = null
     uuid  = @active_asset().match(/assets\/(.+)\/versions/)[1]

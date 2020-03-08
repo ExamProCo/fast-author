@@ -32856,6 +32856,7 @@ Data = class Data {
     this.keep_selection = this.keep_selection.bind(this);
     this.get_asset_version = this.get_asset_version.bind(this);
     this.render = this.render.bind(this);
+    this.expand_paths = this.expand_paths.bind(this);
     this.get_asset = this.get_asset.bind(this);
     // The root directory where all the markdown files are stored
     // eg. ~/fast-author/
@@ -32921,9 +32922,13 @@ Data = class Data {
   render() {
     var markdown;
     markdown = this.document();
-    markdown = markdown.replace(/~&/g, [this.home(), this.active_file(), 'assets'].join('/'));
+    markdown = this.expand_paths(markdown);
     markdown = markdown.replace(/\[\s\]/g, "<input type='checkbox' />");
     return markdown;
+  }
+
+  expand_paths(markdown) {
+    return markdown.replace(/~&/g, [this.home(), this.active_file(), 'assets'].join('/'));
   }
 
   get_asset() {
@@ -32944,6 +32949,150 @@ Data = class Data {
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (new Data());
+
+
+/***/ }),
+
+/***/ "./src/common/export.coffee":
+/*!**********************************!*\
+  !*** ./src/common/export.coffee ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! fs */ "fs");
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! path */ "path");
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var common_data__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! common/data */ "./src/common/data.coffee");
+var Export;
+
+
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = (Export = class Export {
+  static rewrite(replace_dirs, content) {
+    var i, len, re, redir;
+    for (i = 0, len = replace_dirs.length; i < len; i++) {
+      redir = replace_dirs[i];
+      re = new RegExp(redir + '/', 'g');
+      content = content.replace(re, '');
+    }
+    return content;
+  }
+
+  static copy_assets_and_replace_map(dir, html_body) {
+    var current_dir, destination, filename, i, len, replace_dirs, result, results, url;
+    results = html_body.match(/src=".+?"/g);
+    replace_dirs = [];
+    if (results) {
+      for (i = 0, len = results.length; i < len; i++) {
+        result = results[i];
+        url = result.replace('src="', '').replace(/"$/, '');
+        current_dir = path__WEBPACK_IMPORTED_MODULE_1___default.a.dirname(url);
+        if (replace_dirs.indexOf(dir) === -1) {
+          replace_dirs.push(current_dir);
+        }
+        filename = path__WEBPACK_IMPORTED_MODULE_1___default.a.basename(url);
+        destination = [dir, filename].join('/');
+        fs__WEBPACK_IMPORTED_MODULE_0___default.a.copyFile(url, destination, (err) => {
+          if (err) {
+            return console.log('copy err', err);
+          } else {
+            return console.log('copied', url, destination);
+          }
+        });
+      }
+    }
+    return replace_dirs;
+  }
+
+  static html(html_body) {
+    var html_end, html_start;
+    html_start = `<html>
+  <head>
+    <title>
+      ${common_data__WEBPACK_IMPORTED_MODULE_2__["default"].active_file()}
+    </title>
+    <link type="text/css" rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <main>`;
+    html_end = `  </main>
+</body>
+</html>`;
+    return html_start + html_body + html_end;
+  }
+
+  static css() {
+    var css;
+    return css = `* { box-sizing: border-box; }
+html, body { 
+  background: rgb(240,240,240);
+  padding: 0;
+  margin: 0;
+  font-family: arial;
+}
+main {
+  width: 880px;
+  border-radius: 4px;
+  border: solid 1px rgb(210,210,210);
+  background: #fff;
+  padding: 24px 77px;
+  margin: 0px auto;
+  margin-top: 24px;
+  box-shadow: 1px 1px 0px #c2c2c2;
+}
+.markdown h1, h2, h3, h4, h5, h6 {
+  margin: 0px;
+  margin-bottom: 12px;
+}
+.markdown h1 { font-size: 32px }
+.markdown h2 { font-size: 24px }
+.markdown h3 { font-size: 20px }
+.markdown h4 { font-size: 16px }
+.markdown p  { margin-top: 0px }
+.mardown img {
+  margin: 0;
+  display: block;
+  border: solid 1px rgb(255,255,255)
+}
+.markdown code {
+  background: #d6dbe6;
+  border-radius: 4px;
+  font-family: Menlo, Verdana;
+  padding: 1px 4px;
+  font-size: 14px;
+}
+.markdown pre code {
+  padding: 16px;
+  overflow: auto;
+  display: block;
+}
+.markdown blockquote {
+  margin-left: 0;
+  border-left: solid 8px #ffb885;
+}
+.markdown blockquote p {
+  margin-left: 24px;
+}
+.markdown table {
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+.markdown table th,
+.markdown table td {
+  border: solid 1px rgb(200,200,200);
+  padding: 8px;
+}`;
+  }
+
+});
 
 
 /***/ }),
@@ -33117,16 +33266,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var components_textarea__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! components/textarea */ "./src/components/textarea.coffee");
 /* harmony import */ var remarkable__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! remarkable */ "./node_modules/remarkable/dist/esm/index.browser.js");
 /* harmony import */ var components_preview__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! components/preview */ "./src/components/preview.coffee");
-/* harmony import */ var common_data__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! common/data */ "./src/common/data.coffee");
-/* harmony import */ var common_save__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! common/save */ "./src/common/save.coffee");
-/* harmony import */ var lib_hotkey_heading__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! lib/hotkey_heading */ "./src/lib/hotkey_heading.coffee");
-/* harmony import */ var lib_hotkey_wrap__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! lib/hotkey_wrap */ "./src/lib/hotkey_wrap.coffee");
-/* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! uuid/v4 */ "./node_modules/uuid/v4.js");
-/* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(uuid_v4__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! fs */ "fs");
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! path */ "path");
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var common_export__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! common/export */ "./src/common/export.coffee");
+/* harmony import */ var common_data__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! common/data */ "./src/common/data.coffee");
+/* harmony import */ var common_save__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! common/save */ "./src/common/save.coffee");
+/* harmony import */ var lib_hotkey_heading__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! lib/hotkey_heading */ "./src/lib/hotkey_heading.coffee");
+/* harmony import */ var lib_hotkey_wrap__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! lib/hotkey_wrap */ "./src/lib/hotkey_wrap.coffee");
+/* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! uuid/v4 */ "./node_modules/uuid/v4.js");
+/* harmony import */ var uuid_v4__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(uuid_v4__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! fs */ "fs");
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_10__);
 /* harmony import */ var mkdir_recursive__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! mkdir-recursive */ "./node_modules/mkdir-recursive/index.js");
 /* harmony import */ var mkdir_recursive__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(mkdir_recursive__WEBPACK_IMPORTED_MODULE_11__);
 /* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! electron */ "electron");
@@ -33198,10 +33346,10 @@ var Article;
     target = document.getElementById('editor');
     start_at = target.selectionStart;
     end_at = target.selectionEnd;
-    data = lib_hotkey_wrap__WEBPACK_IMPORTED_MODULE_7__["default"].insert(common_data__WEBPACK_IMPORTED_MODULE_4__["default"].document(), start_at, end_at, "**", "**");
-    common_data__WEBPACK_IMPORTED_MODULE_4__["default"].document(data.value);
-    common_data__WEBPACK_IMPORTED_MODULE_4__["default"].selectionStart(data.selectionStart);
-    return common_data__WEBPACK_IMPORTED_MODULE_4__["default"].selectionEnd(data.selectionEnd);
+    data = lib_hotkey_wrap__WEBPACK_IMPORTED_MODULE_8__["default"].insert(common_data__WEBPACK_IMPORTED_MODULE_5__["default"].document(), start_at, end_at, "**", "**");
+    common_data__WEBPACK_IMPORTED_MODULE_5__["default"].document(data.value);
+    common_data__WEBPACK_IMPORTED_MODULE_5__["default"].selectionStart(data.selectionStart);
+    return common_data__WEBPACK_IMPORTED_MODULE_5__["default"].selectionEnd(data.selectionEnd);
   }
 
   red() {
@@ -33209,10 +33357,10 @@ var Article;
     target = document.getElementById('editor');
     start_at = target.selectionStart;
     end_at = target.selectionEnd;
-    data = lib_hotkey_wrap__WEBPACK_IMPORTED_MODULE_7__["default"].insert(common_data__WEBPACK_IMPORTED_MODULE_4__["default"].document(), start_at, end_at, "<strong class='r'>", "</strong>");
-    common_data__WEBPACK_IMPORTED_MODULE_4__["default"].document(data.value);
-    common_data__WEBPACK_IMPORTED_MODULE_4__["default"].selectionStart(data.selectionStart);
-    return common_data__WEBPACK_IMPORTED_MODULE_4__["default"].selectionEnd(data.selectionEnd);
+    data = lib_hotkey_wrap__WEBPACK_IMPORTED_MODULE_8__["default"].insert(common_data__WEBPACK_IMPORTED_MODULE_5__["default"].document(), start_at, end_at, "<strong class='r'>", "</strong>");
+    common_data__WEBPACK_IMPORTED_MODULE_5__["default"].document(data.value);
+    common_data__WEBPACK_IMPORTED_MODULE_5__["default"].selectionStart(data.selectionStart);
+    return common_data__WEBPACK_IMPORTED_MODULE_5__["default"].selectionEnd(data.selectionEnd);
   }
 
   underline() {}
@@ -33222,22 +33370,22 @@ var Article;
     target = document.getElementById('editor');
     start_at = target.selectionStart;
     end_at = target.selectionEnd;
-    data = lib_hotkey_wrap__WEBPACK_IMPORTED_MODULE_7__["default"].insert(common_data__WEBPACK_IMPORTED_MODULE_4__["default"].document(), start_at, end_at, "<strong class='h'>", "</strong>");
-    common_data__WEBPACK_IMPORTED_MODULE_4__["default"].document(data.value);
-    common_data__WEBPACK_IMPORTED_MODULE_4__["default"].selectionStart(data.selectionStart);
-    return common_data__WEBPACK_IMPORTED_MODULE_4__["default"].selectionEnd(data.selectionEnd);
+    data = lib_hotkey_wrap__WEBPACK_IMPORTED_MODULE_8__["default"].insert(common_data__WEBPACK_IMPORTED_MODULE_5__["default"].document(), start_at, end_at, "<strong class='h'>", "</strong>");
+    common_data__WEBPACK_IMPORTED_MODULE_5__["default"].document(data.value);
+    common_data__WEBPACK_IMPORTED_MODULE_5__["default"].selectionStart(data.selectionStart);
+    return common_data__WEBPACK_IMPORTED_MODULE_5__["default"].selectionEnd(data.selectionEnd);
   }
 
   image_resize() {
     return electron__WEBPACK_IMPORTED_MODULE_12__["ipcRenderer"].send('sharp-resize', {
-      project: common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_file(),
-      asset: common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_asset()
+      project: common_data__WEBPACK_IMPORTED_MODULE_5__["default"].active_file(),
+      asset: common_data__WEBPACK_IMPORTED_MODULE_5__["default"].active_asset()
     });
   }
 
   image_border() {
     var canvas, ctx, el, new_canvas, tmp_path, version;
-    version = common_data__WEBPACK_IMPORTED_MODULE_4__["default"].get_asset_version();
+    version = common_data__WEBPACK_IMPORTED_MODULE_5__["default"].get_asset_version();
     el = document.querySelector('#draw');
     el.innerHTML = '';
     new_canvas = document.createElement('canvas');
@@ -33253,15 +33401,15 @@ var Article;
     // x, y, width, height
     ctx.rect(0, 0, version.width, version.height);
     ctx.stroke();
-    tmp_path = `/tmp/save-border-${uuid_v4__WEBPACK_IMPORTED_MODULE_8___default()()}.png`;
-    return fs__WEBPACK_IMPORTED_MODULE_9___default.a.writeFile(tmp_path, canvas.toDataURL().replace(/^data:image\/png;base64,/, ""), 'base64', function(err) {
+    tmp_path = `/tmp/save-border-${uuid_v4__WEBPACK_IMPORTED_MODULE_9___default()()}.png`;
+    return fs__WEBPACK_IMPORTED_MODULE_10___default.a.writeFile(tmp_path, canvas.toDataURL().replace(/^data:image\/png;base64,/, ""), 'base64', function(err) {
       var source;
       if (err) {
         console.log('err', err);
       }
-      source = common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_asset().replace('file://', '');
+      source = common_data__WEBPACK_IMPORTED_MODULE_5__["default"].active_asset().replace('file://', '');
       return electron__WEBPACK_IMPORTED_MODULE_12__["ipcRenderer"].send('sharp-border', {
-        project: common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_file(),
+        project: common_data__WEBPACK_IMPORTED_MODULE_5__["default"].active_file(),
         overlay: tmp_path,
         source: source
       });
@@ -33271,122 +33419,33 @@ var Article;
   replace() {}
 
   export() {
-    var css, css_path, current_dir, date, destination, dir, el, epoch, filename, html, html_body, html_end, html_start, i, j, len, len1, path, re, redir, replace_dirs, result, results, url;
+    var css_path, date, dir, el, epoch, html, html_body, html_path, markdown, markdown_path, replace_dirs;
     el = document.querySelector('.pane.preview.markdown');
     html_body = el.outerHTML;
     date = new Date().getTime();
     epoch = Math.round(date / 1000);
-    filename = "index.html";
-    dir = `${common_data__WEBPACK_IMPORTED_MODULE_4__["default"].home()}/${common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_file()}/exports/${epoch}`;
-    if (!fs__WEBPACK_IMPORTED_MODULE_9___default.a.existsSync(dir)) {
+    dir = `${common_data__WEBPACK_IMPORTED_MODULE_5__["default"].home()}/${common_data__WEBPACK_IMPORTED_MODULE_5__["default"].active_file()}/exports/${epoch}`;
+    if (!fs__WEBPACK_IMPORTED_MODULE_10___default.a.existsSync(dir)) {
       mkdir_recursive__WEBPACK_IMPORTED_MODULE_11__["mkdirSync"](dir);
     }
-    path = [dir, filename].join('/');
+    html_path = [dir, 'index.html'].join('/');
     css_path = [dir, 'style.css'].join('/');
-    results = html_body.match(/src=".+?"/g);
-    replace_dirs = [];
-    if (results) {
-      for (i = 0, len = results.length; i < len; i++) {
-        result = results[i];
-        url = result.replace('src="', '').replace(/"$/, '');
-        current_dir = path__WEBPACK_IMPORTED_MODULE_10___default.a.dirname(url);
-        if (replace_dirs.indexOf(dir) === -1) {
-          replace_dirs.push(current_dir);
-        }
-        filename = path__WEBPACK_IMPORTED_MODULE_10___default.a.basename(url);
-        destination = [dir, filename].join('/');
-        fs__WEBPACK_IMPORTED_MODULE_9___default.a.copyFile(url, destination, (err) => {
-          if (err) {
-            return console.log('copy err', err);
-          } else {
-            return console.log('copied', url, destination);
-          }
-        });
+    markdown_path = [dir, 'index.md'].join('/');
+    replace_dirs = common_export__WEBPACK_IMPORTED_MODULE_4__["default"].copy_assets_and_replace_map(dir, html_body);
+    html_body = common_export__WEBPACK_IMPORTED_MODULE_4__["default"].rewrite(replace_dirs, html_body);
+    markdown = common_export__WEBPACK_IMPORTED_MODULE_4__["default"].rewrite(replace_dirs, common_data__WEBPACK_IMPORTED_MODULE_5__["default"].expand_paths(common_data__WEBPACK_IMPORTED_MODULE_5__["default"].document()));
+    html = common_export__WEBPACK_IMPORTED_MODULE_4__["default"].html(html_body);
+    fs__WEBPACK_IMPORTED_MODULE_10___default.a.writeFile(markdown_path, markdown, function(err) {
+      if (err) {
+        return console.log('err', err);
       }
-    }
-    for (j = 0, len1 = replace_dirs.length; j < len1; j++) {
-      redir = replace_dirs[j];
-      re = new RegExp(redir + '/', 'g');
-      html_body = html_body.replace(re, '');
-    }
-    html_start = `<html>
-  <head>
-    <title>
-      ${common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_file()}
-    </title>
-    <link type="text/css" rel="stylesheet" href="style.css">
-  </head>
-  <body>
-    <main>`;
-    html_end = `  </main>
-</body>
-</html>`;
-    html = html_start + html_body + html_end;
-    css = `* { box-sizing: border-box; }
-html, body { 
-  background: rgb(240,240,240);
-  padding: 0;
-  margin: 0;
-  font-family: arial;
-}
-main {
-  width: 880px;
-  border-radius: 4px;
-  border: solid 1px rgb(210,210,210);
-  background: #fff;
-  padding: 24px 77px;
-  margin: 0px auto;
-  margin-top: 24px;
-  box-shadow: 1px 1px 0px #c2c2c2;
-}
-.markdown h1, h2, h3, h4, h5, h6 {
-  margin: 0px;
-  margin-bottom: 12px;
-}
-.markdown h1 { font-size: 32px }
-.markdown h2 { font-size: 24px }
-.markdown h3 { font-size: 20px }
-.markdown h4 { font-size: 16px }
-.markdown p  { margin-top: 0px }
-.mardown img {
-  margin: 0;
-  display: block;
-  border: solid 1px rgb(255,255,255)
-}
-.markdown code {
-  background: #d6dbe6;
-  border-radius: 4px;
-  font-family: Menlo, Verdana;
-  padding: 1px 4px;
-  font-size: 14px;
-}
-.markdown pre code {
-  padding: 16px;
-  overflow: auto;
-  display: block;
-}
-.markdown blockquote {
-  margin-left: 0;
-  border-left: solid 8px #ffb885;
-}
-.markdown blockquote p {
-  margin-left: 24px;
-}
-.markdown table {
-  border-collapse: collapse;
-  margin-bottom: 16px;
-}
-.markdown table th,
-.markdown table td {
-  border: solid 1px rgb(200,200,200);
-  padding: 8px;
-}`;
-    return fs__WEBPACK_IMPORTED_MODULE_9___default.a.writeFile(path, html, function(err) {
+    });
+    return fs__WEBPACK_IMPORTED_MODULE_10___default.a.writeFile(html_path, html, function(err) {
       if (err) {
         console.log('err', err);
       }
-      return fs__WEBPACK_IMPORTED_MODULE_9___default.a.writeFile(css_path, css, function(err) {
-        `${common_data__WEBPACK_IMPORTED_MODULE_4__["default"].home()}/${common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_file()}/style.css`;
+      return fs__WEBPACK_IMPORTED_MODULE_10___default.a.writeFile(css_path, common_export__WEBPACK_IMPORTED_MODULE_4__["default"].css(), function(err) {
+        `${common_data__WEBPACK_IMPORTED_MODULE_5__["default"].home()}/${common_data__WEBPACK_IMPORTED_MODULE_5__["default"].active_file()}/style.css`;
         if (err) {
           console.log('err', err);
         }
@@ -33403,11 +33462,11 @@ main {
 
   image_paint() {
     var asset, version;
-    asset = common_data__WEBPACK_IMPORTED_MODULE_4__["default"].get_asset();
-    version = common_data__WEBPACK_IMPORTED_MODULE_4__["default"].get_asset_version();
+    asset = common_data__WEBPACK_IMPORTED_MODULE_5__["default"].get_asset();
+    version = common_data__WEBPACK_IMPORTED_MODULE_5__["default"].get_asset_version();
     return electron__WEBPACK_IMPORTED_MODULE_12__["ipcRenderer"].send('drawing-window', {
-      project: common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_file(),
-      path: common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_asset(),
+      project: common_data__WEBPACK_IMPORTED_MODULE_5__["default"].active_file(),
+      path: common_data__WEBPACK_IMPORTED_MODULE_5__["default"].active_asset(),
       version: version,
       asset: asset
     });
@@ -33418,19 +33477,19 @@ main {
   }
 
   toggle_line_wrap() {
-    return common_data__WEBPACK_IMPORTED_MODULE_4__["default"].line_wrap(!common_data__WEBPACK_IMPORTED_MODULE_4__["default"].line_wrap());
+    return common_data__WEBPACK_IMPORTED_MODULE_5__["default"].line_wrap(!common_data__WEBPACK_IMPORTED_MODULE_5__["default"].line_wrap());
   }
 
   publisher_preview() {
-    return common_data__WEBPACK_IMPORTED_MODULE_4__["default"].publisher_preview(!common_data__WEBPACK_IMPORTED_MODULE_4__["default"].publisher_preview());
+    return common_data__WEBPACK_IMPORTED_MODULE_5__["default"].publisher_preview(!common_data__WEBPACK_IMPORTED_MODULE_5__["default"].publisher_preview());
   }
 
   splitview() {
-    return common_data__WEBPACK_IMPORTED_MODULE_4__["default"].splitview(!common_data__WEBPACK_IMPORTED_MODULE_4__["default"].splitview());
+    return common_data__WEBPACK_IMPORTED_MODULE_5__["default"].splitview(!common_data__WEBPACK_IMPORTED_MODULE_5__["default"].splitview());
   }
 
   save() {
-    return common_save__WEBPACK_IMPORTED_MODULE_5__["default"].save();
+    return common_save__WEBPACK_IMPORTED_MODULE_6__["default"].save();
   }
 
   meta_char() {
@@ -33463,13 +33522,13 @@ main {
   }
 
   subpreview() {
-    if (!common_data__WEBPACK_IMPORTED_MODULE_4__["default"].splitview()) {
+    if (!common_data__WEBPACK_IMPORTED_MODULE_5__["default"].splitview()) {
       return;
     }
     return mithril__WEBPACK_IMPORTED_MODULE_0__('.preview', mithril__WEBPACK_IMPORTED_MODULE_0__('span.lbl', 'Preview'), mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.export', {
       "data-tippy-content": "Export Preview to HTML",
       onclick: this.export
-    }, mithril__WEBPACK_IMPORTED_MODULE_0__('span.fas fa-file-export')), common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_asset() ? [
+    }, mithril__WEBPACK_IMPORTED_MODULE_0__('span.fas fa-file-export')), common_data__WEBPACK_IMPORTED_MODULE_5__["default"].active_asset() ? [
       mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.crop',
       {
         "data-tippy-content": "Crop Image",
@@ -33498,7 +33557,7 @@ main {
   }
 
   subheader() {
-    if (common_data__WEBPACK_IMPORTED_MODULE_4__["default"].publisher_preview()) {
+    if (common_data__WEBPACK_IMPORTED_MODULE_5__["default"].publisher_preview()) {
       return;
     }
     return mithril__WEBPACK_IMPORTED_MODULE_0__('section.sub', this.subeditor(), this.subpreview(), mithril__WEBPACK_IMPORTED_MODULE_0__('em'));
@@ -33507,7 +33566,7 @@ main {
   header() {
     return mithril__WEBPACK_IMPORTED_MODULE_0__('header', mithril__WEBPACK_IMPORTED_MODULE_0__('section.main', mithril__WEBPACK_IMPORTED_MODULE_0__('.title', {
       contenteditable: true
-    }, mithril__WEBPACK_IMPORTED_MODULE_0__["trust"](common_data__WEBPACK_IMPORTED_MODULE_4__["default"].active_file())), mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.save', {
+    }, mithril__WEBPACK_IMPORTED_MODULE_0__["trust"](common_data__WEBPACK_IMPORTED_MODULE_5__["default"].active_file())), mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.save', {
       "data-tippy-content": `Publisher Preview (${this.meta_char()}P)`,
       onclick: this.publisher_preview
     }, mithril__WEBPACK_IMPORTED_MODULE_0__('span.far.fa-eye')), mithril__WEBPACK_IMPORTED_MODULE_0__('span.btn.fullscreen', {
@@ -33522,20 +33581,20 @@ main {
   classes_article() {
     var classes;
     classes = [];
-    if (common_data__WEBPACK_IMPORTED_MODULE_4__["default"].splitview()) {
+    if (common_data__WEBPACK_IMPORTED_MODULE_5__["default"].splitview()) {
       classes.push('split');
     }
     return classes.join(' ');
   }
 
   panes() {
-    return mithril__WEBPACK_IMPORTED_MODULE_0__('.panes', mithril__WEBPACK_IMPORTED_MODULE_0__(components_textarea__WEBPACK_IMPORTED_MODULE_1__["default"]), common_data__WEBPACK_IMPORTED_MODULE_4__["default"].splitview() ? mithril__WEBPACK_IMPORTED_MODULE_0__(components_preview__WEBPACK_IMPORTED_MODULE_3__["default"]) : void 0, mithril__WEBPACK_IMPORTED_MODULE_0__('em'));
+    return mithril__WEBPACK_IMPORTED_MODULE_0__('.panes', mithril__WEBPACK_IMPORTED_MODULE_0__(components_textarea__WEBPACK_IMPORTED_MODULE_1__["default"]), common_data__WEBPACK_IMPORTED_MODULE_5__["default"].splitview() ? mithril__WEBPACK_IMPORTED_MODULE_0__(components_preview__WEBPACK_IMPORTED_MODULE_3__["default"]) : void 0, mithril__WEBPACK_IMPORTED_MODULE_0__('em'));
   }
 
   view() {
     return mithril__WEBPACK_IMPORTED_MODULE_0__('article', {
       class: this.classes_article()
-    }, this.header(), common_data__WEBPACK_IMPORTED_MODULE_4__["default"].publisher_preview() ? mithril__WEBPACK_IMPORTED_MODULE_0__('.publisher_preview.markdown', mithril__WEBPACK_IMPORTED_MODULE_0__["trust"](this.md.render(common_data__WEBPACK_IMPORTED_MODULE_4__["default"].render()))) : this.panes());
+    }, this.header(), common_data__WEBPACK_IMPORTED_MODULE_5__["default"].publisher_preview() ? mithril__WEBPACK_IMPORTED_MODULE_0__('.publisher_preview.markdown', mithril__WEBPACK_IMPORTED_MODULE_0__["trust"](this.md.render(common_data__WEBPACK_IMPORTED_MODULE_5__["default"].render()))) : this.panes());
   }
 
 });
