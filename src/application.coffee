@@ -27,8 +27,8 @@ ipc.on 'response-assets', (e,data)=>
   Data.assets data
   m.redraw(true)
 ipc.on 'response-sharp', (e,data)=>
-  org_asset_path = data.org_asset.replace(/^.*assets/,'~')
-  new_asset_path = data.new_asset.replace(/^.*assets/,'~')
+  org_asset_path = data.org_asset.replace(/^.*assets/,'~&')
+  new_asset_path = data.new_asset.replace(/^.*assets/,'~&')
   console.log new_asset_path
   console.log org_asset_path
 

@@ -32777,8 +32777,8 @@ electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].on('response-assets', (e, d
 
 electron__WEBPACK_IMPORTED_MODULE_2__["ipcRenderer"].on('response-sharp', (e, data) => {
   var new_asset_path, org_asset_path, v;
-  org_asset_path = data.org_asset.replace(/^.*assets/, '~');
-  new_asset_path = data.new_asset.replace(/^.*assets/, '~');
+  org_asset_path = data.org_asset.replace(/^.*assets/, '~&');
+  new_asset_path = data.new_asset.replace(/^.*assets/, '~&');
   console.log(new_asset_path);
   console.log(org_asset_path);
   v = common_data__WEBPACK_IMPORTED_MODULE_3__["default"].document().replace(org_asset_path, new_asset_path);
