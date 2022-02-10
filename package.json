@@ -29,7 +29,7 @@
     "marked": "^0.8.0",
     "mkdir-recursive": "^0.4.0",
     "moment": "^2.24.0",
-    "node-sass": "^4.7.2",
+    "node-sass": "^7.0.0",
     "remarkable": "^2.0.0",
     "request": "^2.88.2",
     "sass-loader": "^6.0.6",
