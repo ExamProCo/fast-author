@@ -28,7 +28,7 @@
     "js-yaml": ">=3.13.1",
     "marked": "^0.8.0",
     "mkdir-recursive": "^0.4.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "node-sass": "^4.7.2",
     "remarkable": "^2.0.0",
     "request": "^2.88.2",
